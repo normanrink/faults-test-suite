@@ -1,22 +1,21 @@
 cmake_minimum_required(VERSION 2.8)
 
-include(../buildtest.cmake)
+include(../../cmake/build-test.cmake)
 
-set(CRC_INPUT crc_input_small.pcm)
-add_custom_target(${CRC_INPUT} ALL
-                  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/${CRC_INPUT} ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_target(crc_input_small.pcm ALL
+                  COMMAND cmake -E copy
+                          ${CMAKE_CURRENT_SOURCE_DIR}/crc_input_small.pcm
+                          ${CMAKE_CURRENT_BINARY_DIR}/crc_input_small.pcm
+                  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/crc_input_small.pcm)
 
-BUILD_TEST_CASE(crc crc.veri)
-BUILD_TEST_CONFIG(crc crc.veri
-                      ${CMAKE_CURRENT_BINARY_DIR}/${CRC_INPUT}
-                      ${CMAKE_CURRENT_SOURCE_DIR}/crc.veri.cfg)
+BUILD_PLAIN_TEST(crc veri crc.main.c crc.enc.c 1 1)
+BUILD_REF_OUTPUT(crc veri crc_input_small.pcm)
+BUILD_ENCODED_TEST(crc veri crc.main.c crc.enc.c 1 1)
 
-BUILD_TEST_CASE(crc crc.perf)
-BUILD_TEST_CONFIG(crc crc.perf
-                      ${CMAKE_CURRENT_BINARY_DIR}/${CRC_INPUT}
-                      ${CMAKE_CURRENT_SOURCE_DIR}/crc.perf.cfg)
+BUILD_PLAIN_TEST(crc perf crc.main.c crc.enc.c 1 1)
+BUILD_REF_OUTPUT(crc perf crc_input_small.pcm)
+BUILD_ENCODED_TEST(crc perf crc.main.c crc.enc.c 1 1)
 
-BUILD_TEST_CASE(crc crc.cover)
-BUILD_TEST_CONFIG(crc crc.cover
-                      ${CMAKE_CURRENT_BINARY_DIR}/${CRC_INPUT}
-                      ${CMAKE_CURRENT_SOURCE_DIR}/crc.cover.cfg)
+BUILD_PLAIN_TEST(crc cover crc.main.c crc.enc.c 1 1)
+BUILD_REF_OUTPUT(crc cover crc_input_small.pcm)
+BUILD_ENCODED_TEST(crc cover crc.main.c crc.enc.c 1 1)

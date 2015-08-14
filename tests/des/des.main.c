@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../mylibs/encode.h"
-#include "../mylibs/mycyc.h"
-#include "../mylibs/mycheck.h"
+#include "encode.h"
+#include "mycheck.h"
+#include "mycyc.h"
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../mylibs/encode.h"
+#include "encode.h"
 
 //#define DBG(desc, num, bits)		dbg_num(desc, num, 32);
 //#define DBG(desc, num, bits)		dbg_num(desc, num, bits);

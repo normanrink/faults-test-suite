@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 
-#include "../mylibs/encode.h"
+#include "encode.h"
 
 #define UPDC32(octet,crc) (crc_32_tab[((crc)^(octet)) & 0xff]^ ((crc) >> 8))
 

@@ -1,60 +1,51 @@
 cmake_minimum_required(VERSION 2.8)
 
-include(../buildtest.cmake)
-
-function(COPY_DES_INPUT INPUT_FILENAME)
-  add_custom_target(${INPUT_FILENAME} ALL
-                    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/${INPUT_FILENAME} ${CMAKE_CURRENT_BINARY_DIR}
-                    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${INPUT_FILENAME})
-endfunction(COPY_DES_INPUT)
+include(../../cmake/build-test.cmake)
 
 # Tiny test case:
-set(DES_TINY_INPUT  des.input.tiny.txt)
-COPY_DES_INPUT(${DES_TINY_INPUT})
+configure_file(des.input.tiny.txt des.input.tiny.txt)
 
-BUILD_TEST_CASE(des des.tiny.veri)
-BUILD_TEST_CONFIG(des des.tiny.veri
-                      "-e ${CMAKE_CURRENT_BINARY_DIR}/${DES_TINY_INPUT} /dev/null 809"
-                      ${CMAKE_CURRENT_SOURCE_DIR}/des.tiny.veri.cfg)
+BUILD_PLAIN_TEST(des tiny.veri des.main.c des.enc.c 1 1)
+BUILD_REF_OUTPUT(des tiny.veri
+                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.tiny.txt;/dev/null;809")
+BUILD_ENCODED_TEST(des tiny.veri des.main.c des.enc.c 1 1)
 
-BUILD_TEST_CASE(des des.tiny.perf)
-BUILD_TEST_CONFIG(des des.tiny.perf
-                      "-e ${CMAKE_CURRENT_BINARY_DIR}/${DES_TINY_INPUT} /dev/null 809"
-                      ${CMAKE_CURRENT_SOURCE_DIR}/des.tiny.perf.cfg)
+BUILD_PLAIN_TEST(des tiny.perf des.main.c des.enc.c 1 1)
+BUILD_REF_OUTPUT(des tiny.perf
+                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.tiny.txt;/dev/null;809")
+BUILD_ENCODED_TEST(des tiny.perf des.main.c des.enc.c 1 1)
 
-BUILD_TEST_CASE(des des.tiny.cover)
-BUILD_TEST_CONFIG(des des.tiny.cover
-                      "-e ${CMAKE_CURRENT_BINARY_DIR}/${DES_TINY_INPUT} /dev/null 809"
-                      ${CMAKE_CURRENT_SOURCE_DIR}/des.tiny.cover.cfg)
+BUILD_PLAIN_TEST(des tiny.cover des.main.c des.enc.c 1 1)
+BUILD_REF_OUTPUT(des tiny.cover
+                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.tiny.txt;/dev/null;809")
+BUILD_ENCODED_TEST(des tiny.cover des.main.c des.enc.c 1 1)
 
 # Large test case:
-set(DES_LARGE_INPUT des.input.large.txt)
-COPY_DES_INPUT(${DES_LARGE_INPUT})
+configure_file(des.input.large.txt des.input.large.txt)
 
-BUILD_TEST_CASE(des des.large.veri)
-BUILD_TEST_CONFIG(des des.large.veri
-                      "-e ${CMAKE_CURRENT_BINARY_DIR}/${DES_LARGE_INPUT} /dev/null 809"
-                      ${CMAKE_CURRENT_SOURCE_DIR}/des.large.veri.cfg)
+BUILD_PLAIN_TEST(des large.veri des.main.c des.enc.c 1 1)
+BUILD_REF_OUTPUT(des large.veri
+                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.large.txt;/dev/null;809")
+BUILD_ENCODED_TEST(des large.veri des.main.c des.enc.c 1 1)
 
-BUILD_TEST_CASE(des des.large.perf)
-BUILD_TEST_CONFIG(des des.large.perf
-                      "-e ${CMAKE_CURRENT_BINARY_DIR}/${DES_LARGE_INPUT} /dev/null 809"
-                      ${CMAKE_CURRENT_SOURCE_DIR}/des.large.perf.cfg)
+BUILD_PLAIN_TEST(des large.perf des.main.c des.enc.c 1 1)
+BUILD_REF_OUTPUT(des large.perf
+                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.large.txt;/dev/null;809")
+BUILD_ENCODED_TEST(des large.perf des.main.c des.enc.c 1 1)
 
 # NOTE: Only the "tiny" test case is used for coverage.
 
 # Huge test case:
-set(DES_HUGE_INPUT des.input.huge.txt)
-COPY_DES_INPUT(${DES_HUGE_INPUT})
+configure_file(des.input.huge.txt des.input.huge.txt)
 
-BUILD_TEST_CASE(des des.huge.veri)
-BUILD_TEST_CONFIG(des des.huge.veri
-                      "-e ${CMAKE_CURRENT_BINARY_DIR}/${DES_HUGE_INPUT} /dev/null 809"
-                      ${CMAKE_CURRENT_SOURCE_DIR}/des.huge.veri.cfg)
+BUILD_PLAIN_TEST(des huge.veri des.main.c des.enc.c 1 1)
+BUILD_REF_OUTPUT(des huge.veri
+                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.huge.txt;/dev/null;809")
+BUILD_ENCODED_TEST(des huge.veri des.main.c des.enc.c 1 1)
 
-BUILD_TEST_CASE(des des.huge.perf)
-BUILD_TEST_CONFIG(des des.huge.perf
-                      "-e ${CMAKE_CURRENT_BINARY_DIR}/${DES_HUGE_INPUT} /dev/null 809"
-                      ${CMAKE_CURRENT_SOURCE_DIR}/des.huge.perf.cfg)
+BUILD_PLAIN_TEST(des huge.perf des.main.c des.enc.c 1 1)
+BUILD_REF_OUTPUT(des huge.perf
+                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.huge.txt;/dev/null;809")
+BUILD_ENCODED_TEST(des.huge perf des.main.c des.enc.c 1 1)
 
 # NOTE: Only the "tiny" test case is used for coverage.

@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 
 # Build the test cases:
 add_subdirectory(array_sum)
-#add_subdirectory(crc)
-#add_subdirectory(des)
+add_subdirectory(crc)
+add_subdirectory(des)
 add_subdirectory(dijkstra)
 add_subdirectory(matmul)
 add_subdirectory(matmul_overflow)

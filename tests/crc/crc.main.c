@@ -62,9 +62,9 @@
 
 #include <stdio.h>
 
-#include "../mylibs/encode.h"
-#include "../mylibs/mycyc.h"
-#include "../mylibs/mycheck.h"
+#include "encode.h"
+#include "mycheck.h"
+#include "mycyc.h"
 
 
 /* CRC polynomial 0xedb88320 */
