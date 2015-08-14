@@ -11,12 +11,10 @@ endif(NOT DEFINED ENCODING_PROFILE OR NOT ENCODING_PROFILE)
 
 
 # Set build options/compiler flags:
-set(ENCODE_OPTS -p ${ENCODING_PROFILE})
-# More compiler flags:
 if("${CMAKE_BUILD_TYPE}" MATCHES "DEBUG" OR "${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   set(CLANG_EMIT_LLVM_OPTS -O0)
   set(CLANG_BACKEND_OPTS -O0)
-  set(ENCODE_OPTS ${ENCODE_OPTS} -no-inlining -no-opts)
+  set(ENCODE_OPTS -no-inlining -no-opts)
   set(DEBUG_OPTS -g)
 else()
   set(CLANG_EMIT_LLVM_OPTS -O2)
@@ -84,6 +82,7 @@ function(BUILD_REF_OUTPUT TEST_NAME TEST_INFIX ARGS)
   set(REF_TARGET   reference.${TARGET}.out)
 
 # Generate reference output:
+  string(REPLACE ";" " " $ARGS $ARGS)
   add_custom_target(${REF_TARGET} ALL
                     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${PLAIN_TARGET}
                             ${ARGS}
@@ -101,7 +100,6 @@ function(BUILD_ENCODED_TEST TEST_NAME TEST_INFIX MAIN_SRC ENC_SRC LENGTH REPETIT
 
 # Set common variables:
   set(TARGET ${TEST_NAME}.${TEST_INFIX})
-  set(REFERENCE reference.${TEST_INFIX}.out)
 
 # Set variabled for 'encoded' test:
   set(MAIN_BC        "${TARGET}.main.encoded.bc")
@@ -137,31 +135,38 @@ function(BUILD_ENCODED_TEST TEST_NAME TEST_INFIX MAIN_SRC ENC_SRC LENGTH REPETIT
                              -o ${ENC_TMP_BC}
                              ${CMAKE_CURRENT_SOURCE_DIR}/${ENC_SRC}
                      COMMAND ${ENCODER}
-                             ${ENCODE_OPTS}
+                             ${ENCODE_OPTS} -p ${ENCODING_PROFILE}
                              -o ${ENC_BC}
                              ${ENC_TMP_BC}
                      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${ENC_SRC})
 # Link both modules:
   add_custom_command(OUTPUT ${ENCODED_BC}
-                    COMMAND ${LLVM_LINK}
-                            -o ${ENCODED_BC}
-                            ${MAIN_BC} ${ENC_BC}
-                            ${BC_LIBS}/myargs.bc
-                            ${BC_LIBS}/mycheck.bc
-                            ${BC_LIBS}/mycyc.bc
-                    DEPENDS ${MAIN_BC} ${ENC_BC} mycheck.bc mycyc.bc myargs.bc)
+                     COMMAND ${LLVM_LINK}
+                             -o ${ENCODED_BC}
+                             ${MAIN_BC} ${ENC_BC}
+                             ${BC_LIBS}/myargs.bc
+                             ${BC_LIBS}/mycheck.bc
+                             ${BC_LIBS}/mycyc.bc
+                     DEPENDS ${MAIN_BC} ${ENC_BC} mycheck.bc mycyc.bc myargs.bc)
 # Build the 'encoded' executable:
-  add_custom_target(${ENCODED_TARGET} ALL
-                    COMMAND ${CLANG} ${CLANG_BACKEND_OPTS}
-                            -o ${ENCODED_TARGET}
-                            ${ENCODED_BC}
-                    DEPENDS ${ENCODED_BC})
+  add_custom_command(OUTPUT ${ENCODED_TARGET} ALL
+                     COMMAND ${CLANG} ${CLANG_BACKEND_OPTS}
+                             -o ${ENCODED_TARGET}
+                             ${ENCODED_BC}
+                     DEPENDS ${ENCODED_BC})
 # Generate an assembly file (for debugging of the encoder):
-  add_custom_target(${ENCODED_S} ALL
-                    COMMAND ${CLANG} -S ${CLANG_BACKEND_OPTS}
-                            -o ${ENCODED_S}
-                            ${ENCODED_BC}
-                    DEPENDS ${ENCODED_BC})
+  add_custom_command(OUTPUT ${ENCODED_S}
+                     COMMAND ${CLANG} -S ${CLANG_BACKEND_OPTS}
+                             -o ${ENCODED_S}
+                             ${ENCODED_BC}
+                     DEPENDS ${ENCODED_BC})
+# HACK: If 'add_custom_target' is used for both '${ENCODED_TARGET}' and '${ENCODED_S}',
+# then "make -jX" fails for 'X > 1'. Apparently this is a CMake problem  that is at
+# least vaguley known to the relevant comunity. Here this problem is avoided by
+# creating the dummy target '${TARGET}' and using 'add_custom_command' to generate
+# both '${ENCODED_TARGET}' and '${ENCODED_S}':
+  add_custom_target(${TARGET} ALL
+                    DEPENDS ${ENCODED_TARGET} ${ENCODED_BC})
 endfunction(BUILD_ENCODED_TEST)
 
 
