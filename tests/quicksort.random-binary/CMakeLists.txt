@@ -5,24 +5,24 @@ include(../../cmake/build-test.cmake)
 
 BUILD_PLAIN_TEST(quicksort.random-binary veri
                  quicksort.random-binary.main.c quicksort.random-binary.enc.c
-                 100 10)
+                 "False" 100 10)
 BUILD_REF_OUTPUT(quicksort.random-binary veri "")
 BUILD_ENCODED_TEST(quicksort.random-binary veri
                    quicksort.random-binary.main.c quicksort.random-binary.enc.c
-                   100 10)
+                   "False" 100 10)
 
 BUILD_PLAIN_TEST(quicksort.random-binary perf
                  quicksort.random-binary.main.c quicksort.random-binary.enc.c
-                 ${LENGTH_PERF} 100)
+                 "False" ${LENGTH_PERF} 100)
 BUILD_REF_OUTPUT(quicksort.random-binary perf "")
 BUILD_ENCODED_TEST(quicksort.random-binary perf
                    quicksort.random-binary.main.c quicksort.random-binary.enc.c
-                   ${LENGTH_PERF} 100)
+                   "False" ${LENGTH_PERF} 100)
 
 BUILD_PLAIN_TEST(quicksort.random-binary cover
                  quicksort.random-binary.main.c quicksort.random-binary.enc.c
-                 10 1)
+                 "True" 10 1)
 BUILD_REF_OUTPUT(quicksort.random-binary cover "")
 BUILD_ENCODED_TEST(quicksort.random-binary cover
                    quicksort.random-binary.main.c quicksort.random-binary.enc.c
-                   10 1)
+                   "True" 10 1)

@@ -22,7 +22,8 @@ else()
 endif("${CMAKE_BUILD_TYPE}" MATCHES "DEBUG" OR "${CMAKE_BUILD_TYPE}" MATCHES "Debug")
 
 
-function(BUILD_PLAIN_TEST TEST_NAME TEST_INFIX MAIN_SRC ENC_SRC LENGTH REPETITIONS)
+function(BUILD_PLAIN_TEST
+         TEST_NAME TEST_INFIX MAIN_SRC ENC_SRC COVER_TEST LENGTH REPETITIONS)
 # Define macros for the C-preprocessor:
   set(PP_DEFS -DLENGTH=${LENGTH})
   set(PP_DEFS ${PP_DEFS} -DREPETITIONS=${REPETITIONS})
@@ -56,6 +57,15 @@ function(BUILD_PLAIN_TEST TEST_NAME TEST_INFIX MAIN_SRC ENC_SRC LENGTH REPETITIO
                              -o ${ENC_BC}
                              ${CMAKE_CURRENT_SOURCE_DIR}/${ENC_SRC}
                      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${ENC_SRC})
+  if(${COVER_TEST})
+    set(ENC_COVER_BC "${TARGET}.enc.plain.cover.bc")
+    add_custom_command(OUTPUT ${ENC_COVER_BC}
+                       COMMAND ${OPT} -load ${NO_ENC_INLINE_LIB}
+                               -NoEncInline ${ENC_BC}
+                               -o ${ENC_COVER_BC}
+                       DEPENDS ${ENC_BC})
+    set(ENC_BC ${ENC_COVER_BC})
+  endif(${COVER_TEST})
 # Link both modules:
   add_custom_command(OUTPUT ${PLAIN_BC}
                     COMMAND ${LLVM_LINK}
@@ -91,7 +101,8 @@ function(BUILD_REF_OUTPUT TEST_NAME TEST_INFIX ARGS)
 endfunction(BUILD_REF_OUTPUT)
 
 
-function(BUILD_ENCODED_TEST TEST_NAME TEST_INFIX MAIN_SRC ENC_SRC LENGTH REPETITIONS)
+function(BUILD_ENCODED_TEST
+         TEST_NAME TEST_INFIX MAIN_SRC ENC_SRC COVER_TEST LENGTH REPETITIONS)
 # Define macros for the C-preprocessor:
   set(PP_DEFS -DLENGTH=${LENGTH})
   set(PP_DEFS ${PP_DEFS} -DREPETITIONS=${REPETITIONS})
@@ -135,10 +146,19 @@ function(BUILD_ENCODED_TEST TEST_NAME TEST_INFIX MAIN_SRC ENC_SRC LENGTH REPETIT
                              -o ${ENC_TMP_BC}
                              ${CMAKE_CURRENT_SOURCE_DIR}/${ENC_SRC}
                      COMMAND ${ENCODER}
-                             ${ENCODE_OPTS} -p ${ENCODING_PROFILE}
+                             ${ENCODE_OPTS} -p ${ENCODING_PROFILE} -disable-enc-inlining
                              -o ${ENC_BC}
                              ${ENC_TMP_BC}
                      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${ENC_SRC})
+  if(${COVER_TEST})
+    set(ENC_COVER_BC "${TARGET}.enc.encoded.cover.bc")
+    add_custom_command(OUTPUT ${ENC_COVER_BC}
+                       COMMAND ${OPT} -load ${NO_ENC_INLINE_LIB}
+                               -NoEncInline ${ENC_BC}
+                               -o ${ENC_COVER_BC}
+                       DEPENDS ${ENC_BC})
+    set(ENC_BC ${ENC_COVER_BC})
+  endif(${COVER_TEST})
 # Link both modules:
   add_custom_command(OUTPUT ${ENCODED_BC}
                      COMMAND ${LLVM_LINK}

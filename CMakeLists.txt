@@ -10,6 +10,7 @@ set(CLANG     ${LLVM_INSTALL_PREFIX}/bin/clang)
 set(CLANGXX   ${LLVM_INSTALL_PREFIX}/bin/clang++)
 set(LLVM_LINK ${LLVM_INSTALL_PREFIX}/bin/llvm-link)
 set(LLVM_DIS  ${LLVM_INSTALL_PREFIX}/bin/llvm-dis)
+set(OPT       ${LLVM_INSTALL_PREFIX}/bin/opt)
 
 # Ensure that clang is used for building: -- NOT CURRENTLY NEEDED
 # set(CMAKE_C_COMPILER   ${CLANG})
@@ -37,6 +38,10 @@ set(BC_LIBS ${CMAKE_CURRENT_BINARY_DIR}/utility)
 # Set variable 'INC_LIBS' to the folder containing header
 # files for the bitcode libraries:
 set(INC_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/utility)
+
+add_subdirectory(transformations)
+set(NO_ENC_INLINE_LIB
+    ${CMAKE_CURRENT_BINARY_DIR}/transformations/libNoEncInline.so)
 
 # Build the test cases:
 add_subdirectory(tests)
