@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 #ifdef ENCODE
   #define ___CHECK_RANGE(p, n) \
   { \

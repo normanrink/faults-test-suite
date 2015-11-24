@@ -20,14 +20,16 @@ static FILE *csl = NULL; // File for logging output to do with votes.
 
 static void set_votes(void *votes, void *value, size_t sz_val) {
   char *addr = (char*)votes;
-  for (unsigned i = 0; i < VOTES; i++)
+  unsigned i;
+  for (i = 0; i < VOTES; i++)
     memcpy(addr + i*sz_val, value, sz_val);
 }
 
 void print_votes(FILE *f, void *votes, size_t sz_val) {
   char *addr = (char*)votes;
+  unsigned i;
   fprintf(f, "&votes=0x%lX, votes: ", (uint64_t)votes);
-  for (unsigned i = 0; i < VOTES; i++) {
+  for (i = 0; i < VOTES; i++) {
     __uint128_t v = 0;
     memcpy(&v, addr + i*sz_val, sz_val);
     uint64_t lo = (uint64_t)v;
@@ -171,7 +173,7 @@ size_t __cs_facc(__uint128_t x) {
 }
 
 void __cs_fclose() {
-  FILE *fp = (FILE*)vote(fp_checksum, sizeof(FILE*));
+  FILE *fp = (FILE*)(uint64_t)vote(fp_checksum, sizeof(FILE*));
   fclose(fp);
 }
 

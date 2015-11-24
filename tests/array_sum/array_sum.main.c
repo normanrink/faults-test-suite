@@ -7,15 +7,18 @@
 #include "mycheck.h"
 #include "mycyc.h"
 
+
 extern long ___enc_init_and_sum(long*, long, long);
+
+const unsigned length = LENGTH;
+const unsigned repetitions = REPETITIONS;
+
+long a[length];
 
 
 int main(int argc, char** argv) {
-    long *a;
     uint64_t t1, t2, total = 0;
     unsigned i;
-    const unsigned length = LENGTH;
-    const unsigned repetitions = REPETITIONS;
 
     fprintf(stderr, "LENGTH=%d\n", length);
     fprintf(stderr, "REPETITIONS=%d\n", repetitions);
@@ -24,14 +27,12 @@ int main(int argc, char** argv) {
     __cs_fopen(argc, argv);
     __cs_reset();
 
-    a = (long*)malloc(length * sizeof(long));
-
     for (i = 0; i < repetitions; i++) {
       long sum;
 
       __cyc_warmup();
       t1 = __cyc_rdtsc();
-      sum = ___enc_init_and_sum(a, length, 42);
+      sum = ___enc_init_and_sum(&a[0], length, 42);
       t2 = __cyc_rdtscp();
       total += t2 - t1;
 

@@ -12,11 +12,12 @@ set(LLVM_LINK ${LLVM_INSTALL_PREFIX}/bin/llvm-link)
 set(LLVM_DIS  ${LLVM_INSTALL_PREFIX}/bin/llvm-dis)
 set(OPT       ${LLVM_INSTALL_PREFIX}/bin/opt)
 
-# Ensure that clang is used for building: -- NOT CURRENTLY NEEDED
-# set(CMAKE_C_COMPILER   ${CLANG})
-# set(CMAKE_CXX_COMPILER ${CLANGXX})
-# message("Using C compiler: ${CLANG}")
-# message("Using C++ compiler: ${CLANGXX}")
+# 'objdump' for disassembling binaries:
+set(OBJDUMP   objdump)
+
+# Use 'clang' as the standard compiler:
+set(CMAKE_C_COMPILER ${CLANG})
+set(CMAKE_CXX_COMPILER ${CLANGXX})
 
 # Variables for the configuration of test suites:
 set(PIN_COMMAND  "" CACHE PATH "path to executable PIN tool")
@@ -28,16 +29,13 @@ set(VERI_RUNS    "1"   CACHE STRING "")
 
 # Variables for building the test cases:
 set(ENCODER           "" CACHE PATH "")
-set(ENCODING_PROFILE  "" CACHE PATH "")
+
+# Variables for configuring the test cases:
+set(LENGTH      "1" CACHE STRING "")
+set(REPETITIONS "1" CACHE STRING "")
 
 # Library of functions common to all test cases:
 add_subdirectory(utility)
-# Set variable 'BC_LIBS' to the folder where the bitcode
-# libraries will be generated:
-set(BC_LIBS ${CMAKE_CURRENT_BINARY_DIR}/utility)
-# Set variable 'INC_LIBS' to the folder containing header
-# files for the bitcode libraries:
-set(INC_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/utility)
 
 add_subdirectory(transformations)
 set(NO_ENC_INLINE_LIB
