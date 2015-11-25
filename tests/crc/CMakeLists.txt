@@ -36,8 +36,8 @@ endif(CMAKE_BUILD_TYPE MATCHES DEBUG)
 
 
 # Build bitcode files containing arrays of data:
-ADD_BC_COMMAND(${INPUT_BC} ${INPUT_C} "${OPTS};-I${UTILS_INC_PATH}")
-ADD_BC_COMMAND(${CRC_32_TAB_BC} ${CRC_32_TAB_C} "${OPS};-I${UTILS_INC_PATH}")
+ADD_BC_COMMAND(${INPUT_BC} ${INPUT_C} "${OPTS}")
+ADD_BC_COMMAND(${CRC_32_TAB_BC} ${CRC_32_TAB_C} "${OPTS}")
 
 
 # Build the bitcode file for the main application:

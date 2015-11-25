@@ -62,7 +62,6 @@
 
 #include <stdio.h>
 
-#include "encode.h"
 #include "mycheck.h"
 #include "mycyc.h"
 
