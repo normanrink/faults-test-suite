@@ -21,8 +21,10 @@ set(OBJDUMP   objdump)
 set(ENCODER           "" CACHE PATH "")
 
 # Variables for configuring the test cases:
-set(LENGTH      "1" CACHE STRING "")
-set(REPETITIONS "1" CACHE STRING "")
+set(LENGTH          "1"   CACHE STRING "")
+set(REPETITIONS     "1"   CACHE STRING "")
+set(REPORT_CHECKSUM FALSE CACHE BOOL   "")
+set(REPORT_CYCLES   FALSE CACHE BOOL   "")
 
 # Use 'clang' as the standard compiler:
 set(CMAKE_C_COMPILER ${CLANG})
