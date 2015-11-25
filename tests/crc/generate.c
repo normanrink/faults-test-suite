@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    FILE *fout = fopen("input.c", "w");
+    FILE *fout = fopen("crc.input.c", "w");
     assert(fout);
 
     fprintf(fout, "\nlong input[1368865] = {");
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     fprintf(fout, "\n};\n");
     fclose(fout);
 
-    FILE *tab = fopen("crc_32_tab.c", "w");
+    FILE *tab = fopen("crc.crc_32_tab.c", "w");
     fprintf(tab, "\nlong crc_32_tab[256] = {");
     const unsigned crc_tab_size = sizeof(crc_32_tab)/sizeof(long);
     for(i = 0; i < crc_tab_size; i++) {
