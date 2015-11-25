@@ -1,52 +1,59 @@
-#include <stdlib.h>
 
-#include "encode.h"
+#include <stdio.h>
+
 #include "mycheck.h"
 #include "mycyc.h"
 
-extern void ___enc_copy(long, long, long);
+
+#define SIZE 32000
+
+const unsigned length = (LENGTH < SIZE) ? LENGTH : SIZE;
+const unsigned repetitions = REPETITIONS;
+
+extern void ___enc_copy(long *, long *, unsigned long);
+extern long ___enc_get(long *, unsigned long);
+
+
+long target[length];
+extern long source[length];
 
 
 int main(int argc, char **argv) {
   unsigned long t1, t2, total = 0;
-  const unsigned length = LENGTH;
-  const unsigned repetitions = REPETITIONS;
 
+#ifdef DEBUG
   fprintf(stderr, "LENGTH=%d\n", length);
   fprintf(stderr, "REPETITIONS=%d\n", repetitions);
+#endif
 
-  long *a = (long*)malloc(length * sizeof(long));
-  long *b = (long*)malloc(length * sizeof(long));
-
-  __cs_log(argc, argv);
   __cs_fopen(argc, argv);
+#if (defined DEBUG) || (defined CHECKSUM)
+  __cs_log(argc, argv);
   __cs_reset();
+#endif
 
-  srand(0);
   for (unsigned r = 0; r < repetitions; r++) {
-    for (unsigned i = 0; i < length; i++) {
-      b[i] = AN_ENCODE_VALUE(i);
-      a[i] = AN_ENCODE_VALUE(0);
-    }
-
-    unsigned long ai = (unsigned long)a;
-    unsigned long bi = (unsigned long)b;
-
     __cyc_warmup();
     t1 = __cyc_rdtsc();
-    ___enc_copy(ai, bi, length);
+    ___enc_copy(&target[0], &source[0], length);
     t2 = __cyc_rdtscp();
     total += t2 - t1;
 
     for (unsigned i = 0; i < length; i++) {
-      __cs_facc(AN_DECODE_VALUE(a[i]));
-      __cs_acc(AN_DECODE_VALUE(a[i]));
+      __cs_facc(___enc_get(target, i));
+#if (defined DEBUG) || (defined CHECKSUM)
+      __cs_acc(___enc_get(target, i));
+#endif
     }
   }
 
-  __cyc_msg(total);
   __cs_fclose();
+#if (defined DEBUG) || (defined CYCLES)
+  __cyc_msg(total);
+#endif
+#if (defined DEBUG) || (defined CHECKSUM)
   __cs_msg();
+#endif
 
   return 0;
 }

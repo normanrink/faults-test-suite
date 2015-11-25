@@ -1,13 +1,16 @@
 
-#include "encode.h"
+void ___enc_copy(long *, long *, unsigned long) __attribute__((noinline));
+long ___enc_get(long *, unsigned long);
 
-void ___enc_copy(unsigned long a,
-                 unsigned long b,
-                 long size) {
-  long *a_ptr = (long*)(a);
-  long *b_ptr = (long*)(b);
-  for (long i = 0; i < size; i++) {
-      a_ptr[i] = b_ptr[i];
+
+void ___enc_copy(long *tgt, long *src, unsigned long size) {
+  for (unsigned long i = 0; i < size; i++) {
+      tgt[i] = src[i];
   }
-  AN_CHECK_RANGE((int64_t*)a, size);
 }
+
+
+long ___enc_get(long *a, unsigned long i) {
+  return a[i];
+}
+
