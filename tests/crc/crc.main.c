@@ -78,9 +78,11 @@ int main(int argc, char *argv[])
     uint64_t t1, t2, total = 0;
     unsigned i;
 
-    __cs_log(argc, argv);
     __cs_fopen(argc, argv);
+#if (defined DEBUG) || (defined CHECKSUM)
+    __cs_log(argc, argv);
     __cs_reset();
+#endif
 
     t1 = __cyc_rdtsc();
     ___enc_computation(&input[0]);
@@ -88,12 +90,18 @@ int main(int argc, char *argv[])
     total += t2 - t1;
 
     __cs_facc(___enc_get_crc());
+#if (defined DEBUG) || (defined CHECKSUM)
     __cs_acc(___enc_get_crc());
+#endif
 
-    __cyc_msg(total);
     __cs_fclose();
+#if (defined DEBUG) || (defined CYCLES)
+    __cyc_msg(total);
+#endif
+#if (defined DEBUG) || (defined CHECKSUM)
     __cs_msg(); // correct output - 00000000C538EDCF
     printf("bytes read: %ld\n", ___enc_get_charcnt());// correct output - 1368864
+#endif
 
     return 0;
 }
