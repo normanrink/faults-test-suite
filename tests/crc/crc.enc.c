@@ -17,7 +17,7 @@ long crc32file(long *input, long *crc, long *charcnt)
     oldcrc32 = ~0;
     *charcnt = 0;
 
-    while (*input != 0xffffffff)
+    while (*input != -1L)
     {
         ++*charcnt;
         tmp = oldcrc32;

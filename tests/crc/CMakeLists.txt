@@ -80,5 +80,8 @@ ADD_BIN_TARGET(${ENCODED_TARGET}
 ADD_DISASM_TARGET(${ENCODED_TARGET_S} ${ENCODED_TARGET})
 
 
-
+# Generate reference output from the plain binary:
+ADD_OUTPUT_TARGET("crc.out"
+                  "${CMAKE_CURRENT_BINARY_DIR}/${PLAIN_TARGET};--cso;crc.out"
+                  ${PLAIN_TARGET})
 

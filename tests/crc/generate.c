@@ -64,6 +64,7 @@
 /*     using byte-swap instructions.                                   */
 
 #include <stdio.h>
+#include <assert.h>
 
 /* CRC polynomial 0xedb88320 */
 long crc_32_tab[256] = {
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
     if (argc < 2)
         return -1;
 
-    FILE *fin = fopen(argv[1], "r");
+    FILE *fin = fopen(argv[1], "rb");
     if (fin == NULL)
     {
         perror(argv[1]);
@@ -126,15 +127,16 @@ int main(int argc, char *argv[])
     }
 
     FILE *fout = fopen("input.c", "w");
+    assert(fout);
+
     fprintf(fout, "\nlong input[1368865] = {");
-    long c = getc(fin);
     unsigned i = 0;
-    while (c != EOF) {
+    while (!feof(fin)) {
+      long c = getc(fin);
       fprintf(fout, "%s0x%08lx,", (i % 6) ? " " : "\n", c);
-      c = getc(fin);
       ++i;
     }
-    fprintf(fout, "\n0x%08x\n};\n", EOF);
+    fprintf(fout, "\n};\n");
     fclose(fout);
 
     FILE *tab = fopen("crc_32_tab.c", "w");
