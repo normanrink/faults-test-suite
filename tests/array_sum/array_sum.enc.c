@@ -1,18 +1,11 @@
 
-long ___enc_init_and_sum(long *, long, long) __attribute__((noinline));
+long ___enc_sum(long *, long) __attribute__((noinline));
 
 
-long ___enc_init_and_sum(long *a, long n, long v) {
-    long i;
+long ___enc_sum(long *a, long n) {
     long sum = 0;
-
-    for (i = 0; i < n; i++) {
-        a[i] = v;
-    }
-
-    for (i = 0; i < n; i++) {
+    for (long i = 0; i < n; i++)
         sum += a[i];
-    }
 
     return sum;
 }
