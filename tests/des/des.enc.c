@@ -29,11 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
-#include "encode.h"
 
 //#define DBG(desc, num, bits)		dbg_num(desc, num, 32);
 //#define DBG(desc, num, bits)		dbg_num(desc, num, bits);
@@ -96,8 +93,6 @@ void ___enc_generate_sub_keys(long key, long *sk1, long *sk2) {
 		DBG("!!(k1_order[i] & key) ", !!(k1_order[i] & key), 8);
 	        DBG("sk1: ", *sk1, 8);
 	}
-        AN_CHECK_RANGE(sk1, 1);
-        AN_CHECK_RANGE(sk2, 1);
 }
 
 /**
@@ -215,10 +210,9 @@ long ip_inverse(long byte) {
 	return(ret);
 }
 
-long ___enc_des(long byte, long sk1, long sk2) {
+long ___enc_des(long byte, const long *sk1, const long *sk2) {
   byte = ip(byte);
-  byte = fk(byte, sk1, sk2);
+  byte = fk(byte, *sk1, *sk2);
   byte = ip_inverse(byte);
-  AN_CHECK_RANGE(&byte, 1);
   return byte;
 }

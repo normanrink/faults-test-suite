@@ -29,32 +29,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "encode.h"
 #include "mycheck.h"
 #include "mycyc.h"
 
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
-#define USAGE	"Usage: sdes <-e | -d> <input file> <output file> <key 0-1023>\n"
 
-extern void ___enc_generate_sub_keys(long, long*, long*);
-extern long ___enc_des(long, long, long);
+extern long input[];
+
+extern void ___enc_generate_sub_keys(long, long *, long *);
+extern long ___enc_des(long, const long *, const long *);
 
 
 void display_bits(long num, long bits) {
-	long i;
+  long i;
 
-	if(bits < 1 || bits > 32) {
-		printf("Invalid bit quantity");
-		return;
-	}
-	/* display binary representation */
-	for(i = 1L << (bits-1); i > 0L; i >>= 1L) {
-		printf("%s",(i & num) ? "1" : "0");
-	}
-	printf("\n");
+  if (bits < 1 || bits > 32) {
+    printf("Invalid bit quantity");
+    return;
+  }
+  /* display binary representation */
+  for (i = 1L << (bits-1); i > 0L; i >>= 1L) {
+    printf("%s",(i & num) ? "1" : "0");
+  }
+  printf("\n");
 }
 
 
@@ -62,74 +60,35 @@ void display_bits(long num, long bits) {
  * Main program entry point
  */
 int main(int argc, char* argv[]) {
-        uint64_t        t1, t2, total = 0;
-        unsigned        i, j;
-	FILE		*in,*out;
-	short int	key;
-	long		ch = 0, sk1 = 0, sk2 = 0;
+  uint64_t t1, t2, total = 0;
+  long sk1 = 0, sk2 = 0;
 
-	if (argc < 5) {
-		printf(USAGE);
-		return(1);
-	}
-	key = atoi(argv[4]);
-	if ((key < 0 || key > 1023) || strlen(argv[1]) != 2 || argv[1][0] != '-') {
-		printf(USAGE);
-		return(1);
-	}
-	key = (key % 1024);
-	switch (argv[1][1]) {
-		case 'e':		// encrypt
-			___enc_generate_sub_keys(key,&sk1,&sk2);
-			break;
-		case 'd':		// decrypt
-			___enc_generate_sub_keys(key,&sk2,&sk1);
-			break;
-		default:
-			printf(USAGE);
-			return(1);
-	}
-        printf("before: sk1=%lX, sk2=%lX\n", sk1, sk2);
-        sk1 = AN_DECODE_VALUE(sk1);
-        sk2 = AN_DECODE_VALUE(sk2);
-        printf("after: sk1=%lX, sk2=%lX\n", sk1, sk2);
+  const long key = 809;
+  // encrypt:
+  ___enc_generate_sub_keys(key, &sk1, &sk2);
+  // decrypt:
+  //___enc_generate_sub_keys(key, &sk2, &sk1);
 
-	// open input and output files
-	in = fopen(argv[2], "rb");
-	if (!in) {
-		printf("File not found %s\n", argv[2]);
-		return(1);
-	}
-	out = fopen(argv[3], "wb+");
-	if (!out) {
-		printf("Error creating output file %s\n", argv[3]);
-		fclose(in);
-		return(1);
-	}
+  __cs_log(argc, argv);
+  __cs_fopen(argc, argv);
+  __cs_reset();
 
-	printf("Processing...\n");
-        __cs_log(argc, argv);
-        __cs_fopen(argc, argv);
-        __cs_reset();
-	while (!feof(in)) {
-		ch = (long)fgetc(in);
+  unsigned i = 0;
+  while (input[i] != EOF) {
+    t1 = __cyc_rdtsc();
+    long ch = ___enc_des(input[i], &sk1, &sk2);
+    t2 = __cyc_rdtsc();
+    total += t2 - t1;
 
-                t1 = __cyc_rdtsc();
-                ch = ___enc_des(ch, sk1, sk2);
-                t2 = __cyc_rdtsc();
-                total += t2 - t1;
+    __cs_facc(ch);
+    __cs_acc(ch);
 
-                __cs_facc(ch);
-                __cs_acc(ch);
-		fputc((char)ch, out);
-	}
-	printf("Ready!\n");
-	fclose(in);
-	fclose(out);
+    ++i;
+  }
 
-        __cyc_msg(total);
-        __cs_fclose();
-        __cs_msg();
+  __cyc_msg(total);
+  __cs_fclose();
+  __cs_msg();
 
-	return 0;
+  return 0;
 }

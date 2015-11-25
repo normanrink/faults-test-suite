@@ -1,51 +1,79 @@
 cmake_minimum_required(VERSION 2.8)
 
-include(../../cmake/build-test.cmake)
+include(../../cmake/build-test-2.cmake)
 
-# Tiny test case:
-configure_file(des.input.tiny.txt des.input.tiny.txt)
 
-BUILD_PLAIN_TEST(des tiny.veri des.main.c des.enc.c "False" 1 1)
-BUILD_REF_OUTPUT(des tiny.veri
-                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.tiny.txt;/dev/null;809")
-BUILD_ENCODED_TEST(des tiny.veri des.main.c des.enc.c "False" 1 1)
+set(DES_INPUT_SIZE "tiny" CACHE STRING "<tiny|large|huge>")
 
-BUILD_PLAIN_TEST(des tiny.perf des.main.c des.enc.c "False" 1 1)
-BUILD_REF_OUTPUT(des tiny.perf
-                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.tiny.txt;/dev/null;809")
-BUILD_ENCODED_TEST(des tiny.perf des.main.c des.enc.c "False" 1 1)
 
-BUILD_PLAIN_TEST(des tiny.cover des.main.c des.enc.c "True" 1 1)
-BUILD_REF_OUTPUT(des tiny.cover
-                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.tiny.txt;/dev/null;809")
-BUILD_ENCODED_TEST(des tiny.cover des.main.c des.enc.c "True" 1 1)
+set(DES_MAIN_C    ${CMAKE_CURRENT_SOURCE_DIR}/des.main.c)
+set(DES_MAIN_BC   des.main.bc)
+set(DES_ENC_C     ${CMAKE_CURRENT_SOURCE_DIR}/des.enc.c)
+set(DES_ENC_BC    des.enc.bc)
+set(INPUT_C       ${CMAKE_CURRENT_SOURCE_DIR}/input.${DES_INPUT_SIZE}.c)
+set(INPUT_BC      input.${DES_INPUT_SIZE}.bc)
 
-# Large test case:
-configure_file(des.input.large.txt des.input.large.txt)
 
-BUILD_PLAIN_TEST(des large.veri des.main.c des.enc.c "False" 1 1)
-BUILD_REF_OUTPUT(des large.veri
-                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.large.txt;/dev/null;809")
-BUILD_ENCODED_TEST(des large.veri des.main.c des.enc.c "False" 1 1)
+set(ENCODED_BC            des.enc.encoded.bc)
+set(ENCODED_LL            des.enc.encoded.ll)
 
-BUILD_PLAIN_TEST(des large.perf des.main.c des.enc.c "False" 1 1)
-BUILD_REF_OUTPUT(des large.perf
-                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.large.txt;/dev/null;809")
-BUILD_ENCODED_TEST(des large.perf des.main.c des.enc.c "False" 1 1)
 
-# NOTE: Only the "tiny" test case is used for coverage.
+set(PLAIN_TARGET     des.plain)
+set(PLAIN_TARGET_S   des.plain.s)
+set(ENCODED_TARGET   des.encoded)
+set(ENCODED_TARGET_S des.encoded.s)
 
-# Huge test case:
-configure_file(des.input.huge.txt des.input.huge.txt)
 
-BUILD_PLAIN_TEST(des huge.veri des.main.c des.enc.c "False" 1 1)
-BUILD_REF_OUTPUT(des huge.veri
-                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.huge.txt;/dev/null;809")
-BUILD_ENCODED_TEST(des huge.veri des.main.c des.enc.c "False" 1 1)
+if(CMAKE_BUILD_TYPE MATCHES DEBUG)
+  set(OPTS -O0 -g)
+  set(DBG -g)
+else()
+  set(OPTS -O3)
+endif(CMAKE_BUILD_TYPE MATCHES DEBUG)
 
-BUILD_PLAIN_TEST(des huge.perf des.main.c des.enc.c "False" 1 1)
-BUILD_REF_OUTPUT(des huge.perf
-                 "-e;${CMAKE_CURRENT_BINARY_DIR}/des.input.huge.txt;/dev/null;809")
-BUILD_ENCODED_TEST(des.huge perf des.main.c des.enc.c "False" 1 1)
 
-# NOTE: Only the "tiny" test case is used for coverage.
+# Build bitcode file containing array of input data:
+ADD_BC_COMMAND(${INPUT_BC} ${INPUT_C} "${OPTS}")
+
+
+# Build the bitcode file for the main application:
+set(FLAGS ${OPTS} -I${UTILS_INC_PATH} -DLENGTH=${LENGTH}
+                                      -DREPETITIONS=${REPETITIONS})
+ADD_BC_COMMAND(${DES_MAIN_BC} ${DES_MAIN_C} "${FLAGS}")
+
+
+# Build the bitcode file to be encoded:
+set(FLAGS ${DBG} -O0 -mno-sse)
+ADD_BC_COMMAND(${DES_ENC_BC} ${DES_ENC_C} "${FLAGS}")
+
+
+# Encode:
+ADD_ENCODED_BC_COMMAND(${ENCODED_BC} ${DES_ENC_BC} "")
+ADD_LL_DIS_TARGET(${ENCODED_LL} ${ENCODED_BC} "")
+# Note that 'input.*.c' is NOT encoded!
+
+
+# Link the 'plain' application binary:
+ADD_BIN_TARGET(${PLAIN_TARGET}
+               "${DES_MAIN_BC};${DES_ENC_BC};${INPUT_BC}"
+               "${OPTS}"
+               "-L${UTILS_LIB_PATH};-l${UTILS_LIB}"
+               ${UTILS_LIB})
+ADD_DISASM_TARGET(${PLAIN_TARGET_S} ${PLAIN_TARGET})
+
+
+# Link the 'encoded' application binary:
+ADD_BIN_TARGET(${ENCODED_TARGET}
+               "${DES_MAIN_BC};${ENCODED_BC};${INPUT_BC}"
+               "${OPTS}"
+               "-L${UTILS_LIB_PATH};-l${UTILS_LIB}"
+               ${UTILS_LIB})
+ADD_DISASM_TARGET(${ENCODED_TARGET_S} ${ENCODED_TARGET})
+
+
+# Generate reference output from the plain binary:
+ADD_OUTPUT_TARGET("des.out"
+                  "${CMAKE_CURRENT_BINARY_DIR}/${PLAIN_TARGET};--cso;des.out"
+                  ${PLAIN_TARGET})
+
+
