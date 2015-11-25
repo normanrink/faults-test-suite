@@ -79,3 +79,9 @@ ADD_BIN_TARGET(${ENCODED_TARGET}
                ${UTILS_LIB})
 ADD_DISASM_TARGET(${ENCODED_TARGET_S} ${ENCODED_TARGET})
 
+
+# Generate reference output from the plain binary:
+ADD_OUTPUT_TARGET("matmul.out"
+                  "${CMAKE_CURRENT_BINARY_DIR}/${PLAIN_TARGET};--cso;matmul.out"
+                  ${PLAIN_TARGET})
+
