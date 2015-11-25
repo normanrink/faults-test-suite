@@ -47,7 +47,7 @@ ADD_BC_COMMAND(${CRC_MAIN_BC} ${CRC_MAIN_C} "${FLAGS}")
 
 
 # Build the bitcode file to be encoded:
-set(FLAGS -I${UTILS_INC_PATH} ${DBG} -O0 -mno-sse)
+set(FLAGS ${DBG} -O0 -mno-sse)
 ADD_BC_COMMAND(${CRC_ENC_BC} ${CRC_ENC_C} "${FLAGS}")
 
 
