@@ -5,10 +5,10 @@
 #include "mycyc.h"
 
 
-const unsigned length = (LENGTH < 1000) ? LENGTH : 1000;
-const unsigned repetitions = REPETITIONS;
+#define SIZE 1000
 
-long result[length];
+const unsigned length = (LENGTH < SIZE) ? LENGTH : SIZE;
+const unsigned repetitions = REPETITIONS;
 
 extern long vector[length];
 extern long matrix[length*length];
@@ -17,15 +17,22 @@ extern void ___enc_multiply(long *, long *, long *, long);
 extern long ___enc_get(long *, long);
 
 
+long result[length];
+
+
 int main(int argc, char **argv) {
   unsigned long t1, t2, total = 0;
 
+#ifdef DEBUG
   fprintf(stderr, "LENGTH=%d\n", length);
   fprintf(stderr, "REPETITIONS=%d\n", repetitions);
+#endif
 
-  __cs_log(argc, argv);
   __cs_fopen(argc, argv);
+#if (defined DEBUG) || (defined CHECKSUM)
+  __cs_log(argc, argv);
   __cs_reset();
+#endif
 
   for (unsigned k = 0; k < repetitions; k++) {
     __cyc_warmup();
@@ -36,13 +43,19 @@ int main(int argc, char **argv) {
 
     for (unsigned i = 0; i < length; i++) {
       __cs_facc(___enc_get(&result[0], i));
+#if (defined DEBUG) || (defined CHECKSUM)
       __cs_acc(___enc_get(&result[0], i));
+#endif
     }
   }
 
-  __cyc_msg(total);
   __cs_fclose();
+#if (defined DEBUG) || (defined CYCLES)
+  __cyc_msg(total);
+#endif
+#if (defined DEBUG) || (defined CHECKSUM)
   __cs_msg();
+#endif
 
   return 0;
 }
