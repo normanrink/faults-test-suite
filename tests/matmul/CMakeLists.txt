@@ -14,12 +14,12 @@ set(VECTOR_C       ${CMAKE_CURRENT_SOURCE_DIR}/matmul.vector.c)
 set(VECTOR_BC      matmul.vector.bc)
 
 
-set(ENCODED_BC matmul.enc.encoded.bc)
-set(ENCODED_LL matmul.enc.encoded.ll)
-set(ENCODED_MATRIX_BC matrix.encoded.bc)
-set(ENCODED_MATRIX_LL matrix.encoded.ll)
-set(ENCODED_VECTOR_BC vector.encoded.bc)
-set(ENCODED_VECTOR_LL vector.encoded.ll)
+set(ENCODED_BC        matmul.enc.encoded.bc)
+set(ENCODED_LL        matmul.enc.encoded.ll)
+set(ENCODED_MATRIX_BC matmul.matrix.encoded.bc)
+set(ENCODED_MATRIX_LL matmul.matrix.encoded.ll)
+set(ENCODED_VECTOR_BC matmul.vector.encoded.bc)
+set(ENCODED_VECTOR_LL matmul.vector.encoded.ll)
 
 
 set(PLAIN_TARGET     matmul.plain)
