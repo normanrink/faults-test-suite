@@ -14,8 +14,8 @@ set(INPUT_C       ${CMAKE_CURRENT_SOURCE_DIR}/input.${DES_INPUT_SIZE}.c)
 set(INPUT_BC      input.${DES_INPUT_SIZE}.bc)
 
 
-set(ENCODED_BC            des.enc.encoded.bc)
-set(ENCODED_LL            des.enc.encoded.ll)
+set(ENCODED_BC    des.enc.encoded.bc)
+set(ENCODED_LL    des.enc.encoded.ll)
 
 
 set(PLAIN_TARGET     des.plain)
