@@ -1,5 +1,5 @@
+
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "mycheck.h"
 #include "mycyc.h"
