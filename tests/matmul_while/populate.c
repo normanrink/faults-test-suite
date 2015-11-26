@@ -9,8 +9,8 @@
 
 int main() {
 
-  FILE *vector = fopen("matmul.vector.c", "w");
-  FILE *matrix = fopen("matmul.matrix.c", "w");
+  FILE *vector = fopen("matmul_while.vector.c", "w");
+  FILE *matrix = fopen("matmul_while.matrix.c", "w");
 
   fprintf(vector, "long vector[%d] = {", SIZE);
   fprintf(matrix, "long matrix[%d*%d] = {", SIZE, SIZE);
