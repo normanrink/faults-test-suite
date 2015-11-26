@@ -8,7 +8,7 @@ add_subdirectory(des)
 #add_subdirectory(dijkstra)
 add_subdirectory(matmul)
 #add_subdirectory(matmul_overflow)
-#add_subdirectory(matmul_while)
+add_subdirectory(matmul_while)
 add_subdirectory(ptrarith)
 # The sorting algorithms are built with with different inputs:
 #add_subdirectory(bubblesort.best)
