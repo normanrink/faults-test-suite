@@ -1,54 +1,61 @@
 
 #include <stdio.h>
-#include <stdlib.h>
 
-#include "encode.h"
 #include "mycheck.h"
 #include "mycyc.h"
 
-long *a;
-long *b;
-long *mat;
 
-extern void ___enc_kernel(long *, long *, long *, long);
+#define SIZE 1000
+
+const unsigned length = (LENGTH < SIZE) ? LENGTH : SIZE;
+const unsigned repetitions = REPETITIONS;
+
+extern long vector[length];
+extern long matrix[length*length];
+
+extern void ___enc_multiply(long *, long *, long *, long);
+extern long ___enc_get(long *, long);
+
+
+long result[length];
 
 
 int main(int argc, char **argv) {
   unsigned long t1, t2, total = 0;
-  const unsigned length = 1024;
-  const unsigned repetitions = 1;
 
+#ifdef DEBUG
   fprintf(stderr, "LENGTH=%d\n", length);
   fprintf(stderr, "REPETITIONS=%d\n", repetitions);
+#endif
 
-  long *a = (long*)malloc(length * sizeof(long));
-  long *b = (long*)malloc(length * sizeof(long));
-  long *mat = (long*)malloc(length * length * sizeof(long));
-
-  for (unsigned i = 0; i < length; i++) {
-    for (unsigned j = 0; j < length; j++)
-      mat[i*length + j] = AN_ENCODE_VALUE(i*j);
-
-    b[i] = AN_ENCODE_VALUE(i);
-    a[i] = 0;
-  }
-  __cs_log(argc, argv);
   __cs_fopen(argc, argv);
+#if (defined DEBUG) || (defined CHECKSUM)
+  __cs_log(argc, argv);
   __cs_reset();
+#endif
 
-  t1 = __cyc_rdtsc();
-  ___enc_kernel(a, mat, b, length);
-  t2 = __cyc_rdtsc();
-  total += t2 - t1;
+  for (unsigned k = 0; k < repetitions; k++) {
+    __cyc_warmup();
+    t1 = __cyc_rdtsc();
+    ___enc_multiply(&result[0], &matrix[0], &vector[0], length);
+    t2 = __cyc_rdtscp();
+    total += t2 - t1;
 
-  for (unsigned i = 0; i < length; i++) {
-    __cs_facc(AN_DECODE_VALUE(a[i]));
-    __cs_acc(AN_DECODE_VALUE(a[i]));
+    for (unsigned i = 0; i < length; i++) {
+      __cs_facc(___enc_get(&result[0], i));
+#if (defined DEBUG) || (defined CHECKSUM)
+      __cs_acc(___enc_get(&result[0], i));
+#endif
+    }
   }
 
-  __cyc_msg(total);
   __cs_fclose();
+#if (defined DEBUG) || (defined CYCLES)
+  __cyc_msg(total);
+#endif
+#if (defined DEBUG) || (defined CHECKSUM)
   __cs_msg();
+#endif
 
   return 0;
 }
