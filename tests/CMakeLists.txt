@@ -1,6 +1,19 @@
 cmake_minimum_required(VERSION 2.8)
 
 
+# Variables for building the test cases:
+set(ENCODER           "" CACHE PATH "")
+# 'objdump' for disassembling binaries:
+set(OBJDUMP   objdump)
+
+
+# Variables for configuring the test cases:
+set(LENGTH          "32"   CACHE STRING "")
+set(REPETITIONS     "1"    CACHE STRING "")
+set(REPORT_CHECKSUM FALSE CACHE BOOL   "")
+set(REPORT_CYCLES   FALSE CACHE BOOL   "")
+
+
 # Build the test cases:
 add_subdirectory(array_sum)
 add_subdirectory(crc)

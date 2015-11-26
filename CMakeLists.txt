@@ -14,17 +14,6 @@ set(LLVM_LINK ${LLVM_INSTALL_PREFIX}/bin/llvm-link)
 set(LLVM_DIS  ${LLVM_INSTALL_PREFIX}/bin/llvm-dis)
 set(OPT       ${LLVM_INSTALL_PREFIX}/bin/opt)
 
-# 'objdump' for disassembling binaries:
-set(OBJDUMP   objdump)
-
-# Variables for building the test cases:
-set(ENCODER           "" CACHE PATH "")
-
-# Variables for configuring the test cases:
-set(LENGTH          "1"   CACHE STRING "")
-set(REPETITIONS     "1"   CACHE STRING "")
-set(REPORT_CHECKSUM FALSE CACHE BOOL   "")
-set(REPORT_CYCLES   FALSE CACHE BOOL   "")
 
 # Use 'clang' as the standard compiler:
 set(CMAKE_C_COMPILER ${CLANG})
@@ -33,11 +22,6 @@ set(CMAKE_CXX_COMPILER ${CLANGXX})
 
 # Library of functions common to all test cases:
 add_subdirectory(utility)
-
-
-add_subdirectory(transformations)
-set(NO_ENC_INLINE_LIB
-    ${CMAKE_CURRENT_BINARY_DIR}/transformations/libNoEncInline.so)
 
 
 # Build the test cases:
