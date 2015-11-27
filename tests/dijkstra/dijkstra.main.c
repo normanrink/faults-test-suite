@@ -5,118 +5,92 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "encode.h"
 #include "mycheck.h"
 #include "mycyc.h"
 
-#include "dijkstra.h"
 
-#define log0(...) printf(__VA_ARGS__)
-#define log1(...) printf(__VA_ARGS__)
-#define ADJ_PRINT(...) /*printf(__VA_ARGS__)*/
+#define log0(...)      printf(__VA_ARGS__)
+#define log1(...)      printf(__VA_ARGS__)
+#define ADJ_PRINT(...) printf(__VA_ARGS__)
 
-extern void ___enc_dijkstra(long, long);
 
-long AdjMatrix[NUM_NODES][NUM_NODES];
-NODE rgnNodes[NUM_NODES];
+extern const long max_num_nodes;
 
-/*
- * Helper functions
- */
-void print_path(NODE *rgnNodes, long chNode)
-{
-  if (rgnNodes[chNode].iPrev != NONE)
-  {
-    print_path(rgnNodes, rgnNodes[chNode].iPrev);
-  }
-  log1(" %ld", chNode);
-}
+extern void ___enc_init(unsigned long);
+extern void ___enc_finish();
+extern void ___enc_dijkstra(long, long, long);
+extern long ___enc_get_node_dist(unsigned long);
+extern long ___enc_get_node_pred(unsigned long);
+extern long ___enc_get_matrix_elt(unsigned long, unsigned long);
+extern void ___enc_print_path(long);
 
-int main(int argc, char *argv[])
-{
+
+int main(int argc, char *argv[]) {
   uint64_t t1, t2, total = 0;
-  unsigned i, j, k;
-  FILE *fp;
+  const long num_nodes = (LENGTH < max_num_nodes) ? LENGTH : max_num_nodes;
 
-  if (argc < 2)
-  {
-    fprintf(stderr, "Usage: dijkstra <filename>\n");
-    fprintf(stderr, "Only supports matrix size is #define'd.\n");
-  }
-
-  /* open the adjacency matrix file: */
-  fp = fopen (argv[1], "r");
-  if (!fp) return -1;
-
-  /* generate a symmetric adjacency matrix: */
-  for (i = 0; i < NUM_NODES; i++)
-  {
-    for (j = 0; j <= i; j++)
-    {
-      fscanf(fp, "%d", &k);
-      AdjMatrix[i][j] = AN_ENCODE_VALUE(k);
-      AdjMatrix[j][i] = AN_ENCODE_VALUE(k);
-    }
-  }
-  /* check symmetry: */
-  for (i = 0; i < NUM_NODES; i++)
-  {
-    for (j = 0; j < NUM_NODES; j++)
-      if (AdjMatrix[i][j] != AdjMatrix[j][i])
-        return -1;
-  }
+#ifdef DEBUG
+  fprintf(stderr, "LENGTH=%ld\n", num_nodes);
 
   ADJ_PRINT("Adjacency matrix:\n");
-  for (i = 0; i < NUM_NODES; i++)
-  {
-    for (j = 0; j < NUM_NODES; j++)
-       ADJ_PRINT("(%02d,%02d)%4lld; ", i, j, AN_DECODE_VALUE(AdjMatrix[i][j]));
+  for (long i = 0; i < num_nodes; i++) {
+    for (long j = 0; j < num_nodes; j++) {
+       ADJ_PRINT("(%02ld,%02ld)%4ld; ", i, j, ___enc_get_matrix_elt(i, j));
+    }
     ADJ_PRINT("\n");
   }
   ADJ_PRINT("\n");
+#endif
 
-  __cs_log(argc, argv);
   __cs_fopen(argc, argv);
+#if (defined DEBUG) || (defined CHECKSUM)
+  __cs_log(argc, argv);
   __cs_reset();
-  /* find NUM_NODES shortest paths between nodes */
-  j = NUM_NODES / 2;
-  for (i = 0; i < NUM_NODES; i++)
-  {
-    j = j % NUM_NODES;
+#endif
 
+  ___enc_init(num_nodes);
+
+  /* find NUM_NODES shortest paths between nodes */
+  long j = num_nodes / 2;
+  for (long i = 0; i < num_nodes; i++) {
     t1 = __cyc_rdtsc();
-    ___enc_dijkstra(i, j);
+    ___enc_dijkstra(i, j, num_nodes);
     t2 = __cyc_rdtsc();
     total += t2 - t1;
 
-    if (i == j)
-    {
+    if (i == j) {
+#ifdef DEBUG
       log0("Shortest path is 0 in cost. Just stay where you are.\n");
-    }
-    else
-    {
-      unsigned k;
-      for(k = 0; k < NUM_NODES; k++)
-      {
-        rgnNodes[k].iDist = AN_DECODE_VALUE(rgnNodes[k].iDist);
-        rgnNodes[k].iPrev = AN_DECODE_VALUE(rgnNodes[k].iPrev);
-        __cs_facc(rgnNodes[k].iDist);
-        __cs_acc(rgnNodes[k].iDist);
-        __cs_facc(rgnNodes[k].iPrev);
-        __cs_acc(rgnNodes[k].iPrev);
+#endif
+    } else {
+      for(long k = 0; k < num_nodes; k++) {
+        __cs_facc(___enc_get_node_dist(k));
+        __cs_facc(___enc_get_node_pred(k));
+#if (defined DEBUG) || (defined CHECKSUM)
+        __cs_acc(___enc_get_node_dist(k));
+        __cs_acc(___enc_get_node_pred(k));
+#endif
       }
-      log1("Shortest path is %ld in cost. ", rgnNodes[j].iDist);
+#ifdef DEBUG
+      log1("Shortest path is %ld in cost. ", ___enc_get_node_dist(j));
       log0("Path is: ");
-      print_path(rgnNodes, j);
+      ___enc_print_path(j);
       log0("\n");
+#endif
     }
-
     j++;
+    j = j % num_nodes;
   }
 
-  __cyc_msg(total);
+  ___enc_finish();
+
   __cs_fclose();
+#if (defined DEBUG) || (defined CYCLES)
+  __cyc_msg(total);
+#endif
+#if (defined DEBUG) || (defined CHECKSUM)
   __cs_msg();
+#endif
 
   return 0;
 }
