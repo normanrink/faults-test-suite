@@ -33,22 +33,22 @@ endif(CMAKE_BUILD_TYPE MATCHES DEBUG)
 
 
 # Build bitcode file containing array of input data:
-ADD_BC_COMMAND(${INPUT_BC} ${INPUT_C} "${OPTS}")
+ADD_BC_TARGET(${INPUT_BC} ${INPUT_C} "${OPTS}")
 
 
 # Build the bitcode file for the main application:
 set(FLAGS ${OPTS} -I${UTILS_INC_PATH} -DLENGTH=${LENGTH}
                                       -DREPETITIONS=${REPETITIONS})
-ADD_BC_COMMAND(${DES_MAIN_BC} ${DES_MAIN_C} "${FLAGS}")
+ADD_BC_TARGET(${DES_MAIN_BC} ${DES_MAIN_C} "${FLAGS}")
 
 
 # Build the bitcode file to be encoded:
 set(FLAGS ${DBG} -O0 -mno-sse)
-ADD_BC_COMMAND(${DES_ENC_BC} ${DES_ENC_C} "${FLAGS}")
+ADD_BC_TARGET(${DES_ENC_BC} ${DES_ENC_C} "${FLAGS}")
 
 
 # Encode:
-ADD_ENCODED_BC_COMMAND(${ENCODED_BC} ${DES_ENC_BC} "")
+ADD_ENCODED_BC_TARGET(${ENCODED_BC} ${DES_ENC_BC} "")
 ADD_LL_DIS_TARGET(${ENCODED_LL} ${ENCODED_BC} "")
 # Note that 'input.*.c' is NOT encoded!
 

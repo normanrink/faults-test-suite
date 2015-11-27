@@ -4,10 +4,10 @@ include(../../cmake/functions.cmake)
 include(../../cmake/flags.cmake)
 
 
-set(QUICKSORT_MAIN_C  ${CMAKE_CURRENT_SOURCE_DIR}/quicksort.random.main.c)
-set(QUICKSORT_MAIN_BC quicksort.random.main.bc)
-set(QUICKSORT_ENC_C   ${CMAKE_CURRENT_SOURCE_DIR}/quicksort.random.enc.c)
-set(QUICKSORT_ENC_BC  quicksort.random.enc.bc)
+set(QUICKSORT_MAIN_C   ${CMAKE_CURRENT_SOURCE_DIR}/quicksort.random.main.c)
+set(QUICKSORT_MAIN_BC  quicksort.random.main.bc)
+set(QUICKSORT_ENC_C    ${CMAKE_CURRENT_SOURCE_DIR}/quicksort.random.enc.c)
+set(QUICKSORT_ENC_BC   quicksort.random.enc.bc)
 set(INPUT_C            ${CMAKE_CURRENT_SOURCE_DIR}/quicksort.random.input.c)
 set(INPUT_BC           quicksort.random.input.bc)
 
@@ -25,7 +25,7 @@ set(ENCODED_TARGET_S quicksort.random.encoded.s)
 
 
 # Build the bitcode file containing the input array:
-ADD_BC_COMMAND(${INPUT_BC} ${INPUT_C} "${FLAG_OPTS};${FLAG_DEBUG}")
+ADD_BC_TARGET(${INPUT_BC} ${INPUT_C} "${FLAG_OPTS};${FLAG_DEBUG}")
 
 
 # Build the bitcode file for the main application:
@@ -36,19 +36,19 @@ set(FLAGS ${FLAG_DEBUG} ${FLAG_OPTS}
           ${PREP_DEBUG}
           ${PREP_CYCLES}
           ${PREP_CHECKSUM})
-ADD_BC_COMMAND(${QUICKSORT_MAIN_BC} ${QUICKSORT_MAIN_C} "${FLAGS}")
+ADD_BC_TARGET(${QUICKSORT_MAIN_BC} ${QUICKSORT_MAIN_C} "${FLAGS}")
 
 
 # Build the bitcode file to be encoded:
 set(FLAGS ${FLAG_DEBUG} -O0 -mno-sse)
-ADD_BC_COMMAND(${QUICKSORT_ENC_BC} ${QUICKSORT_ENC_C} "${FLAGS}")
+ADD_BC_TARGET(${QUICKSORT_ENC_BC} ${QUICKSORT_ENC_C} "${FLAGS}")
 
 
 # Encode:
-ADD_ENCODED_BC_COMMAND(${ENCODED_BC} ${QUICKSORT_ENC_BC} "")
+ADD_ENCODED_BC_TARGET(${ENCODED_BC} ${QUICKSORT_ENC_BC} "")
 ADD_LL_DIS_TARGET(${ENCODED_LL} ${ENCODED_BC} "")
 
-ADD_ENCODED_BC_COMMAND(${ENCODED_INPUT_BC} ${INPUT_BC} "")
+ADD_ENCODED_BC_TARGET(${ENCODED_INPUT_BC} ${INPUT_BC} "")
 ADD_LL_DIS_TARGET(${ENCODED_INPUT_LL} ${ENCODED_INPUT_BC} "")
 
 

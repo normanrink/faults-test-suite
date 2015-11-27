@@ -6,34 +6,6 @@ if(NOT DEFINED ENCODER OR NOT ENCODER)
 endif(NOT DEFINED ENCODER OR NOT ENCODER)
 
 
-# "COMMANDs" are only executed if another target depends on them:
-function(ADD_BC_COMMAND TARGET SOURCE FLAGS)
-  add_custom_command(OUTPUT ${TARGET}
-                     COMMAND ${CLANG} -c -emit-llvm ${FLAGS}
-                             -o ${TARGET}
-                             ${SOURCE}
-                     DEPENDS ${SOURCE})
-endfunction(ADD_BC_COMMAND)
-
-
-function(ADD_LL_COMMAND TARGET SOURCE FLAGS)
-  add_custom_command(OUTPUT ${TARGET}
-                     COMMAND ${CLANG} -S -emit-llvm ${FLAGS}
-                             -o ${TARGET}
-                             ${SOURCE}
-                     DEPENDS ${SOURCE})
-endfunction(ADD_LL_COMMAND)
-
-
-function(ADD_ENCODED_BC_COMMAND TARGET SOURCE FLAGS)
-  add_custom_command(OUTPUT ${TARGET} ALL
-                     COMMAND ${ENCODER} ${FLAGS}
-                             -o ${TARGET}
-                             ${SOURCE}
-                     DEPENDS ${SOURCE})
-endfunction(ADD_ENCODED_BC_COMMAND)
-
-
 # Helper function for cleaning ip "CUSTOM_TARGETs":
 function(ADD_MAKE_CLEAN_FILES FILES)
   get_directory_property(FILES_TO_CLEAN ADDITIONAL_MAKE_CLEAN_FILES)
@@ -43,7 +15,42 @@ function(ADD_MAKE_CLEAN_FILES FILES)
 endfunction(ADD_MAKE_CLEAN_FILES)
 
 
-# "TARGETs" are always (re-)build:
+function(ADD_BC_TARGET TARGET SOURCE FLAGS)
+  add_custom_target(${TARGET} ALL
+                    COMMAND ${CLANG} -c -emit-llvm ${FLAGS}
+                            -o ${TARGET}
+                            ${SOURCE}
+                    DEPENDS ${SOURCE})
+  # "CUSTOM_TARGETs" are not usually removed by 'make clean'.
+  # Hence add this target to the list of files to be cleaned:
+  ADD_MAKE_CLEAN_FILES(${TARGET})
+endfunction(ADD_BC_TARGET)
+
+
+function(ADD_LL_TARGET TARGET SOURCE FLAGS)
+  add_custom_target(${TARGET} ALL
+                     COMMAND ${CLANG} -S -emit-llvm ${FLAGS}
+                             -o ${TARGET}
+                             ${SOURCE}
+                     DEPENDS ${SOURCE})
+  # "CUSTOM_TARGETs" are not usually removed by 'make clean'.
+  # Hence add this target to the list of files to be cleaned:
+  ADD_MAKE_CLEAN_FILES(${TARGET})
+endfunction(ADD_LL_TARGET)
+
+
+function(ADD_ENCODED_BC_TARGET TARGET SOURCE FLAGS)
+  add_custom_target(${TARGET} ALL
+                    COMMAND ${ENCODER} ${FLAGS}
+                            -o ${TARGET}
+                            ${SOURCE}
+                    DEPENDS ${SOURCE})
+  # "CUSTOM_TARGETs" are not usually removed by 'make clean'.
+  # Hence add this target to the list of files to be cleaned:
+  ADD_MAKE_CLEAN_FILES(${TARGET})
+endfunction(ADD_ENCODED_BC_TARGET)
+
+
 function(ADD_BIN_TARGET TARGET SOURCE FLAGS LINK_FLAGS DEPENDENCIES)
   add_custom_target(${TARGET} ALL
                     COMMAND ${CLANG} ${FLAGS}
@@ -56,6 +63,7 @@ function(ADD_BIN_TARGET TARGET SOURCE FLAGS LINK_FLAGS DEPENDENCIES)
   # Hence add this target to the list of files to be cleaned:
   ADD_MAKE_CLEAN_FILES(${TARGET})
 endfunction(ADD_BIN_TARGET)
+
 
 function(ADD_ASM_TARGET TARGET SOURCE FLAGS LINK_FLAGS DEPENDENCIES)
   add_custom_command(OUTPUT ${TARGET}
@@ -70,6 +78,7 @@ function(ADD_ASM_TARGET TARGET SOURCE FLAGS LINK_FLAGS DEPENDENCIES)
   ADD_MAKE_CLEAN_FILES(${TARGET})
 endfunction(ADD_ASM_TARGET)
 
+
 function(ADD_LL_DIS_TARGET TARGET SOURCE)
   add_custom_target(${TARGET} ALL
                     COMMAND ${LLVM_DIS}
@@ -81,6 +90,7 @@ function(ADD_LL_DIS_TARGET TARGET SOURCE)
   ADD_MAKE_CLEAN_FILES(${TARGET})
 endfunction(ADD_LL_DIS_TARGET)
 
+
 function(ADD_DISASM_TARGET TARGET SOURCE)
   add_custom_target(${TARGET} ALL
                     COMMAND ${OBJDUMP}
@@ -91,6 +101,7 @@ function(ADD_DISASM_TARGET TARGET SOURCE)
   # Hence add this target to the list of files to be cleaned:
   ADD_MAKE_CLEAN_FILES(${TARGET})
 endfunction(ADD_DISASM_TARGET)
+
 
 function(ADD_OUTPUT_TARGET TARGET CMD DEPENDENCIES)
   add_custom_target(${TARGET} ALL
