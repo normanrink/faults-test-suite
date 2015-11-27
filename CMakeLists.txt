@@ -20,6 +20,7 @@ set(CMAKE_C_COMPILER ${CLANG})
 set(CMAKE_CXX_COMPILER ${CLANGXX})
 
 
+
 # Library of functions common to all test cases:
 add_subdirectory(utility)
 
@@ -28,6 +29,10 @@ add_subdirectory(utility)
 add_subdirectory(tests)
 
 
-# Generate configuration files for various test suites:
-set(BINARIES_FOLDER ${CMAKE_CURRENT_BINARY_DIR}/tests)
-add_subdirectory(configs)
+set(BUILD_CONFIGS FALSE CACHE BOOL "")
+# If desired, generate configuration files for various
+# test suites:
+if(BUILD_CONFIGS)
+  set(BINARIES_FOLDER ${CMAKE_CURRENT_BINARY_DIR}/tests)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
