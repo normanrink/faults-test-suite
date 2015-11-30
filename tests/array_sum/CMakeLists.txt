@@ -69,3 +69,7 @@ ADD_BIN_TARGET(${ENCODED_TARGET}
                ${UTILS_LIB})
 ADD_DISASM_TARGET(${ENCODED_TARGET_S} ${ENCODED_TARGET})
 
+
+if(BUILD_CONFIGS)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
