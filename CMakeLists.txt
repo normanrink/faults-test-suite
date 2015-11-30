@@ -25,14 +25,17 @@ set(CMAKE_CXX_COMPILER ${CLANGXX})
 add_subdirectory(utility)
 
 
+# If desired, build the configuration files first ...
+set(BUILD_CONFIGS FALSE CACHE BOOL "")
+if(BUILD_CONFIGS)
+# ... because we want 'BINARIES_FOLDER' set when we get to the
+# configuration files for the inddividual test cases below.
+  set(BINARIES_FOLDER ${CMAKE_CURRENT_BINARY_DIR}/tests)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
+
+
 # Build the test cases:
 add_subdirectory(tests)
 
 
-set(BUILD_CONFIGS FALSE CACHE BOOL "")
-# If desired, generate configuration files for various
-# test suites:
-if(BUILD_CONFIGS)
-  set(BINARIES_FOLDER ${CMAKE_CURRENT_BINARY_DIR}/tests)
-  add_subdirectory(configs)
-endif(BUILD_CONFIGS)
