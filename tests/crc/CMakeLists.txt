@@ -83,3 +83,7 @@ ADD_OUTPUT_TARGET("crc.out"
                   "${CMAKE_CURRENT_BINARY_DIR}/${PLAIN_TARGET};--cso;crc.out"
                   ${PLAIN_TARGET})
 
+
+if(BUILD_CONFIGS)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
