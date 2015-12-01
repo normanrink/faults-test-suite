@@ -69,9 +69,11 @@ int main(int argc, char* argv[]) {
   // decrypt:
   //___enc_generate_sub_keys(key, &sk2, &sk1);
 
-  __cs_log(argc, argv);
   __cs_fopen(argc, argv);
+#if (defined DEBUG) || (defined CHECKSUM)
+  __cs_log(argc, argv);
   __cs_reset();
+#endif
 
   unsigned i = 0;
   while (input[i] != EOF) {
@@ -81,14 +83,20 @@ int main(int argc, char* argv[]) {
     total += t2 - t1;
 
     __cs_facc(ch);
+#if (defined DEBUG) || (defined CHECKSUM)
     __cs_acc(ch);
+#endif
 
     ++i;
   }
 
-  __cyc_msg(total);
   __cs_fclose();
+#if (defined DEBUG) || (defined CYCLES)
+  __cyc_msg(total);
+#endif
+#if (defined DEBUG) || (defined CHECKSUM)
   __cs_msg();
+#endif
 
   return 0;
 }
