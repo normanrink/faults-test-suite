@@ -66,11 +66,14 @@
 #include "mycyc.h"
 
 
-long input[1368865];
+const long length = LENGTH;
 
-long ___enc_computation(long *);
-long ___enc_get_crc();
-long ___enc_get_charcnt();
+
+extern long input[1368865];
+
+extern long ___enc_computation(long *, long);
+extern long ___enc_get_crc();
+extern long ___enc_get_charcnt();
 
 
 int main(int argc, char *argv[])
@@ -85,7 +88,7 @@ int main(int argc, char *argv[])
 #endif
 
     t1 = __cyc_rdtsc();
-    ___enc_computation(&input[0]);
+    ___enc_computation(&input[0], length);
     t2 = __cyc_rdtsc();
     total += t2 - t1;
 

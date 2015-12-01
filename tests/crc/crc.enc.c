@@ -6,10 +6,10 @@ extern long crc_32_tab[256];
 
 long crc, charcnt;
 
-long crc32file(long *, long *, long *) __attribute__((noinline));
+long crc32file(long *, long *, long *, long) __attribute__((noinline));
 
 
-long crc32file(long *input, long *crc, long *charcnt)
+long crc32file(long *input, long *crc, long *charcnt, long maxcnt)
 {
     register long oldcrc32;
     register long tmp;
@@ -17,7 +17,7 @@ long crc32file(long *input, long *crc, long *charcnt)
     oldcrc32 = ~0;
     *charcnt = 0;
 
-    while (*input != -1L)
+    while (*input != -1L && *charcnt < maxcnt)
     {
         ++*charcnt;
         tmp = oldcrc32;
@@ -32,9 +32,9 @@ long crc32file(long *input, long *crc, long *charcnt)
     return 0;
 }
 
-long ___enc_computation(long *input)
+long ___enc_computation(long *input, long maxcnt)
 {
-    long r = crc32file(input, &crc, &charcnt);
+    long r = crc32file(input, &crc, &charcnt, maxcnt);
 
     return r;
 }
