@@ -102,6 +102,7 @@ void ___enc_generate_sub_keys(long key, long *sk1, long *sk2) {
  * @param input  4-bits
  * @param sk  subkey to combine
  */
+long f(long, long) __attribute__((noinline));
 long f(long input, long sk) {
 	long row0=0,col0=0,row1=0,col1=0;
 	long out=0,ep=0,aux=0;
@@ -151,6 +152,7 @@ long f(long input, long sk) {
  * @param sk1  first subkey
  * @param sk2  second subkey
  */
+long fk(long, long, long) __attribute__((noinline));
 long fk(long input, long sk1, long sk2) {
 	long l=0,r=0,out=0;
 
@@ -175,6 +177,7 @@ long fk(long input, long sk1, long sk2) {
  *
  * @param byte  input to apply the permutation
  */
+long ip(long) __attribute__((noinline));
 long ip(long byte) {
 	long i;
 	long ret;
@@ -198,6 +201,7 @@ long ip(long byte) {
  *
  * @param byte  input to apply the inverted permutation
  */
+long ip_inverse(long) __attribute__((noinline));
 long ip_inverse(long byte) {
 	long i;
 	long ret;
