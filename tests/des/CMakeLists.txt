@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-include(../../cmake/build-test-2.cmake)
+include(../../cmake/functions.cmake)
+include(../../cmake/flags.cmake)
 
 
 set(DES_INPUT_SIZE "tiny" CACHE STRING "<tiny|small|large|huge>")
@@ -37,13 +38,19 @@ ADD_BC_TARGET(${INPUT_BC} ${INPUT_C} "${OPTS}")
 
 
 # Build the bitcode file for the main application:
-set(FLAGS ${OPTS} -I${UTILS_INC_PATH} -DLENGTH=${LENGTH}
-                                      -DREPETITIONS=${REPETITIONS})
+set(FLAGS ${FLAG_DEBUG} ${FLAG_OPTS}
+          -I${UTILS_INC_PATH}
+          -DLENGTH=${LENGTH}
+          -DREPETITIONS=${REPETITIONS}
+          -DNUM_NODES=${DIJKSTRA_NUM_NODES}
+          ${PREP_DEBUG}
+          ${PREP_CYCLES}
+          ${PREP_CHECKSUM})
 ADD_BC_TARGET(${DES_MAIN_BC} ${DES_MAIN_C} "${FLAGS}")
 
 
 # Build the bitcode file to be encoded:
-set(FLAGS ${DBG} -O0 -mno-sse)
+set(FLAGS ${FLAG_DEBUG} -O0 -mno-sse)
 ADD_BC_TARGET(${DES_ENC_BC} ${DES_ENC_C} "${FLAGS}")
 
 
