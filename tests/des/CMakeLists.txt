@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 include(../../cmake/build-test-2.cmake)
 
 
-set(DES_INPUT_SIZE "tiny" CACHE STRING "<tiny|large|huge>")
+set(DES_INPUT_SIZE "tiny" CACHE STRING "<tiny|small|large|huge>")
 
 
 set(DES_MAIN_C    ${CMAKE_CURRENT_SOURCE_DIR}/des.main.c)
@@ -77,3 +77,6 @@ ADD_OUTPUT_TARGET("des.out"
                   ${PLAIN_TARGET})
 
 
+if(BUILD_CONFIGS)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
