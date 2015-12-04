@@ -31,24 +31,6 @@ typedef struct _PATH_NODE PATH_NODE;
 // Global array of visited nodes:
 static PATH_NODE *g_visited;
 
-void ___enc_init(unsigned long num_nodes) {
-  g_visited = (PATH_NODE*)malloc(sizeof(PATH_NODE) * num_nodes);
-  for (long n = 0; n < num_nodes; n++)
-    g_visited[n].index = n;
-}
-
-void ___enc_finish() {
-  free(g_visited);
-}
-
-long ___enc_get_node_dist(unsigned long node) {
-  return g_visited[node].dist;
-}
-
-long ___enc_get_node_pred(unsigned long node) {
-  return g_visited[node].pred;
-}
-
 
 
 // Simple implementation of a queue of PATH_NODEs':
@@ -62,22 +44,28 @@ typedef struct _QITEM QITEM;
 // and the number of elemtns in the queue:
 static QITEM *g_qHead = NULL;
 static long g_qCount = 0;
+// Global variable to hold an array of the maximum number of
+// 'QITEMs' that will be needed during the computation.
+// (In our implementation we never enqueue nodes twice. Therefore
+// we never need more 'QITEMs' than there are nodes.)
+static QITEM *g_qItems = NULL;
 
 QITEM *create_item(PATH_NODE *node) __attribute__((always_inline));
 QITEM *create_item(PATH_NODE *node) {
-  QITEM *qItem = (QITEM*)malloc(sizeof(QITEM));
-  qItem->node = node;
+  QITEM *qItem = g_qItems + node->index;
+  qItem->node = node;    
   qItem->next = NULL;
   return qItem;
 }
 
 void destroy_item(QITEM *) __attribute__((always_inline));
 void destroy_item(QITEM *item) {
-  free(item);
+  ;
 }
 
 void enqueue(PATH_NODE *) __attribute__((always_inline));
 void enqueue(PATH_NODE *node) {
+  LOG_ENQ(node->index, node->dist, node->pred);
   if (!g_qHead) {
     // The queue is empty. Hence add 'qItem' as the head
     // of the queue:
@@ -86,24 +74,23 @@ void enqueue(PATH_NODE *node) {
     g_qCount++;
   } else {
     QITEM *qLast = g_qHead;
-    QITEM *qNode = (g_qHead->node == node) ? g_qHead : NULL;
     while (qLast->next) {
       // Detect if 'node' is already in the queue to avoid
       // that nodes are enqueued twice:
-      if (qLast->node == node)
-        qNode = qLast;
+      if (qLast->node == node) {
+        return;
+      }
       qLast = qLast->next;
     }
-
-    if (qNode == NULL) {
-      // 'node' is NOT already in the queue:
-      qLast->next = create_item(node);
-      // Update counter of elements in the queue:
-      g_qCount++;
+    // We have not yet checked the last node in the queue:
+    if (qLast->node == node) {
+      return;
     }
+    // 'node' is NOT already in the queue:
+    qLast->next = create_item(node);
+    // Update counter of elements in the queue:
+    g_qCount++;
   }
-
-  LOG_ENQ(node->index, node->dist, node->pred);
 }
 
 PATH_NODE *dequeue() __attribute__((always_inline));
@@ -127,6 +114,29 @@ PATH_NODE *dequeue() {
 long qcount() __attribute__((always_inline));
 long qcount() {
   return(g_qCount);
+}
+
+
+
+void ___enc_init(unsigned long num_nodes) {
+  g_visited = (PATH_NODE*)malloc(sizeof(PATH_NODE) * num_nodes);
+  for (long n = 0; n < num_nodes; n++)
+    g_visited[n].index = n;
+
+  g_qItems = (QITEM*)malloc(sizeof(QITEM) * num_nodes);
+}
+
+void ___enc_finish() {
+  free(g_visited);
+  free(g_qItems);
+}
+
+long ___enc_get_node_dist(unsigned long node) {
+  return g_visited[node].dist;
+}
+
+long ___enc_get_node_pred(unsigned long node) {
+  return g_visited[node].pred;
 }
 
 
