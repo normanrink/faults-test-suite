@@ -27,7 +27,7 @@ extern void ___enc_print_path(long);
 
 int main(int argc, char *argv[]) {
   uint64_t t1, t2, total = 0;
-  const long num_nodes = (LENGTH < max_num_nodes) ? LENGTH : max_num_nodes;
+  const long num_nodes = (NUM_NODES < max_num_nodes) ? NUM_NODES : max_num_nodes;
 
 #ifdef DEBUG
   fprintf(stderr, "LENGTH=%ld\n", num_nodes);

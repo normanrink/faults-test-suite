@@ -4,6 +4,9 @@ include(../../cmake/functions.cmake)
 include(../../cmake/flags.cmake)
 
 
+set(DIJKSTRA_NUM_NODES "" CACHE STRING "number of nodes in the graph")
+
+
 set(DIJKSTRA_MAIN_C  ${CMAKE_CURRENT_SOURCE_DIR}/dijkstra.main.c)
 set(DIJKSTRA_MAIN_BC dijkstra.main.bc)
 set(DIJKSTRA_ENC_C   ${CMAKE_CURRENT_SOURCE_DIR}/dijkstra.enc.c)
@@ -33,6 +36,7 @@ set(FLAGS ${FLAG_DEBUG} ${FLAG_OPTS}
           -I${UTILS_INC_PATH}
           -DLENGTH=${LENGTH}
           -DREPETITIONS=${REPETITIONS}
+          -DNUM_NODES=${DIJKSTRA_NUM_NODES}
           ${PREP_DEBUG}
           ${PREP_CYCLES}
           ${PREP_CHECKSUM})
@@ -69,3 +73,13 @@ ADD_BIN_TARGET(${ENCODED_TARGET}
                ${UTILS_LIB})
 ADD_DISASM_TARGET(${ENCODED_TARGET_S} ${ENCODED_TARGET})
 
+
+# Generate reference output from the plain binary:
+ADD_OUTPUT_TARGET("dijkstra.out"
+                  "${CMAKE_CURRENT_BINARY_DIR}/${PLAIN_TARGET};--cso;dijkstra.out"
+                  ${PLAIN_TARGET})
+
+
+if(BUILD_CONFIGS)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
