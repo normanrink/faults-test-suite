@@ -34,13 +34,18 @@ ADD_BC_TARGET(${VECTOR_BC} ${VECTOR_C} "${FLAG_OPTS};${FLAG_DEBUG}")
 
 
 # Build the bitcode file for the main application:
-set(FLAGS ${OPTS} -I${UTILS_INC_PATH} -DLENGTH=${LENGTH}
-                                      -DREPETITIONS=${REPETITIONS})
+set(FLAGS ${FLAG_DEBUG} ${FLAG_OPTS}
+          -I${UTILS_INC_PATH}
+          -DMATMUL_LENGTH=${MATMUL_LENGTH}
+          -DREPETITIONS=${REPETITIONS}
+          ${PREP_DEBUG}
+          ${PREP_CYCLES}
+          ${PREP_CHECKSUM})
 ADD_BC_TARGET(${MATMUL_MAIN_BC} ${MATMUL_MAIN_C} "${FLAGS}")
 
 
 # Build the bitcode file to be encoded:
-set(FLAGS -I${UTILS_INC_PATH} ${DBG} -O0 -mno-sse)
+set(FLAGS ${FLAG_DEBUG} -O0 -mno-sse)
 ADD_BC_TARGET(${MATMUL_ENC_BC} ${MATMUL_ENC_C} "${FLAGS}")
 
 
@@ -78,3 +83,7 @@ ADD_OUTPUT_TARGET("matmul_while.out"
                   "${CMAKE_CURRENT_BINARY_DIR}/${PLAIN_TARGET};--cso;matmul_while.out"
                   ${PLAIN_TARGET})
 
+
+if(BUILD_CONFIGS)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
