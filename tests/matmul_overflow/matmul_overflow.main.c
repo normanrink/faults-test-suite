@@ -7,7 +7,7 @@
 
 #define SIZE 1000
 
-const unsigned length = (LENGTH < SIZE) ? LENGTH : SIZE;
+const unsigned length = (MATMUL_LENGTH < SIZE) ? MATMUL_LENGTH : SIZE;
 const unsigned repetitions = REPETITIONS;
 
 extern long vector[length];
