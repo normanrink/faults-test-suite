@@ -69,3 +69,13 @@ ADD_BIN_TARGET(${ENCODED_TARGET}
                ${UTILS_LIB})
 ADD_DISASM_TARGET(${ENCODED_TARGET_S} ${ENCODED_TARGET})
 
+
+# Generate reference output from the plain binary:
+ADD_OUTPUT_TARGET("ptrarith.out"
+                  "${CMAKE_CURRENT_BINARY_DIR}/${PLAIN_TARGET};--cso;ptrarith.out"
+                  ${PLAIN_TARGET})
+
+
+if(BUILD_CONFIGS)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
