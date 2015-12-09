@@ -77,10 +77,15 @@ int main(int argc, char* argv[]) {
 
   unsigned i = 0;
   while (input[i] != EOF) {
+#if (defined DEBUG) || (defined CYCLES)
+    __cyc_warmup();
     t1 = __cyc_rdtsc();
+#endif
     long ch = ___enc_des(input[i], &sk1, &sk2);
+#if (defined DEBUG) || (defined CYCLES)
     t2 = __cyc_rdtsc();
     total += t2 - t1;
+#endif
 
     __cs_facc(ch);
 #if (defined DEBUG) || (defined CHECKSUM)

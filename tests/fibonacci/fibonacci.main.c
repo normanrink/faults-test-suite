@@ -30,11 +30,15 @@ int main(int argc, char** argv) {
 #endif
 
     for (i = 0; i < repetitions; i++) {
+#if (defined DEBUG) || (defined CYCLES)
       __cyc_warmup();
       t1 = __cyc_rdtsc();
+#endif
       unsigned long f = ___enc_fib(length);
+#if (defined DEBUG) || (defined CYCLES)
       t2 = __cyc_rdtscp();
       total += t2 - t1;
+#endif
 
       __cs_facc(f);
 #if (defined DEBUG) || (defined CHECKSUM)

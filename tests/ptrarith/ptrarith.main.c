@@ -33,11 +33,15 @@ int main(int argc, char **argv) {
 #endif
 
   for (unsigned r = 0; r < repetitions; r++) {
+#if (defined DEBUG) || (defined CYCLES)
     __cyc_warmup();
     t1 = __cyc_rdtsc();
+#endif
     ___enc_copy(&target[0], &source[0], length);
+#if (defined DEBUG) || (defined CYCLES)
     t2 = __cyc_rdtscp();
     total += t2 - t1;
+#endif
 
     for (unsigned i = 0; i < length; i++) {
       __cs_facc(___enc_get(target, i));

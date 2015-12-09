@@ -35,11 +35,15 @@ int main(int argc, char **argv) {
 #endif
 
   for (unsigned k = 0; k < repetitions; k++) {
+#if (defined DEBUG) || (defined CYCLES)
     __cyc_warmup();
     t1 = __cyc_rdtsc();
+#endif
     ___enc_multiply(&result[0], &matrix[0], &vector[0], length);
+#if (defined DEBUG) || (defined CYCLES)
     t2 = __cyc_rdtscp();
     total += t2 - t1;
+#endif
 
     for (unsigned i = 0; i < length; i++) {
       __cs_facc(___enc_get(&result[0], i));

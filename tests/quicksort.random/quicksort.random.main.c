@@ -45,12 +45,15 @@ int main(int argc, char **argv) {
       // runs.)
       memcpy(&a0[0], &a1[0], sizeof(long)*length);
     }
-
+#if (defined DEBUG) || (defined CYCLES)
     __cyc_warmup();
     t1 = __cyc_rdtsc();
+#endif
     ___enc_quicksort(&a0[0], 0, length-1);
+#if (defined DEBUG) || (defined CYCLES)
     t2 = __cyc_rdtscp();
     total += t2 - t1;
+#endif
 
     for (unsigned j = 0; j < length; j++) {
       __cs_facc(___enc_get(a0, j));

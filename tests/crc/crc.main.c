@@ -87,10 +87,15 @@ int main(int argc, char *argv[])
     __cs_reset();
 #endif
 
+#if (defined DEBUG) || (defined CYCLES)
+    __cyc_warmup();
     t1 = __cyc_rdtsc();
+#endif
     ___enc_computation(&input[0], length);
+#if (defined DEBUG) || (defined CYCLES)
     t2 = __cyc_rdtsc();
     total += t2 - t1;
+#endif
 
     __cs_facc(___enc_get_crc());
 #if (defined DEBUG) || (defined CHECKSUM)

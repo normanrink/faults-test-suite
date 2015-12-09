@@ -53,10 +53,15 @@ int main(int argc, char *argv[]) {
   /* find NUM_NODES shortest paths between nodes */
   long j = num_nodes / 2;
   for (long i = 0; i < num_nodes; i++) {
+#if (defined DEBUG) || (defined CYCLES)
+    __cyc_warmup();
     t1 = __cyc_rdtsc();
+#endif
     ___enc_dijkstra(i, j, num_nodes);
+#if (defined DEBUG) || (defined CYCLES)
     t2 = __cyc_rdtsc();
     total += t2 - t1;
+#endif
 
     if (i == j) {
 #ifdef DEBUG
