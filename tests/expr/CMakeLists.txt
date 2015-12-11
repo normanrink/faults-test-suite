@@ -76,6 +76,6 @@ ADD_OUTPUT_TARGET("expr.out"
                   ${PLAIN_TARGET})
 
 
-#if(BUILD_CONFIGS)
-#  add_subdirectory(configs)
-#endif(BUILD_CONFIGS)
+if(BUILD_CONFIGS)
+  add_subdirectory(configs)
+endif(BUILD_CONFIGS)
