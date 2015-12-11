@@ -11,3 +11,6 @@ configure_file(expr.parse.plain.cover.cfg expr.parse.plain.cover.cfg)
 
 configure_file(expr.eval.encoded.cover.cfg expr.eval.encoded.cover.cfg)
 configure_file(expr.eval.plain.cover.cfg expr.eval.plain.cover.cfg)
+
+configure_file(expr.all.encoded.cover.cfg expr.all.encoded.cover.cfg)
+configure_file(expr.all.plain.cover.cfg expr.all.plain.cover.cfg)
