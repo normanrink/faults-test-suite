@@ -200,6 +200,7 @@ void destroyNode(Node *n) {
   /* free(n) */;
 }
 
+Node *parse() __attribute__((noinline));
 Node *parseExpr() __attribute__((noinline));
 Node *parseTerm() __attribute__((noinline));
 Node *parseFactor() __attribute__((noinline));
