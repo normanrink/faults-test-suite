@@ -420,6 +420,7 @@ int64_t ___enc_repl(uint64_t *input) {
   Token t;
 
   buffer = input;
+  cnt_nodes = 0;
   // Avoid system calls for performance ...
   // cur = (Token*)malloc(sizeof(Token));
   // ... use a stack variable instead:
