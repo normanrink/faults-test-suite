@@ -10,7 +10,6 @@ set(OBJDUMP   objdump)
 
 # Variables for configuring the test cases:
 set(LENGTH          "8"   CACHE STRING "")
-set(MATMUL_LENGTH   "4"   CACHE STRING "")
 set(REPETITIONS     "1"   CACHE STRING "")
 set(REPORT_CHECKSUM FALSE CACHE BOOL   "")
 set(REPORT_CYCLES   FALSE CACHE BOOL   "")

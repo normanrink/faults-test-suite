@@ -4,6 +4,9 @@ include(../../cmake/functions.cmake)
 include(../../cmake/flags.cmake)
 
 
+set(FIBONACCI_LENGTH   "8"   CACHE STRING "")
+
+
 set(FIBONACCI_MAIN_C  ${CMAKE_CURRENT_SOURCE_DIR}/fibonacci.main.c)
 set(FIBONACCI_MAIN_BC fibonacci.main.bc)
 set(FIBONACCI_ENC_C   ${CMAKE_CURRENT_SOURCE_DIR}/fibonacci.enc.c)
@@ -23,7 +26,7 @@ set(ENCODED_TARGET_S fibonacci.encoded.s)
 # Build the bitcode file for the main application:
 set(FLAGS ${FLAG_DEBUG} ${FLAG_OPTS}
           -I${UTILS_INC_PATH}
-          -DLENGTH=${LENGTH}
+          -DFIBONACCI_LENGTH=${FIBONACCI_LENGTH}
           -DREPETITIONS=${REPETITIONS}
           ${PREP_DEBUG}
           ${PREP_CYCLES}

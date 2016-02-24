@@ -8,7 +8,7 @@
 #include "mycyc.h"
 
 
-const unsigned length = LENGTH;
+const unsigned length = FIBONACCI_LENGTH;
 const unsigned repetitions = REPETITIONS;
 
 extern unsigned long ___enc_fib(unsigned long);

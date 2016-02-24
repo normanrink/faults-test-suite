@@ -4,6 +4,9 @@ include(../../cmake/functions.cmake)
 include(../../cmake/flags.cmake)
 
 
+set(MATMUL_LENGTH   "4"   CACHE STRING "length of the input vector")
+
+
 set(MATMUL_MAIN_C  ${CMAKE_CURRENT_SOURCE_DIR}/matmul.main.c)
 set(MATMUL_MAIN_BC matmul.main.bc)
 set(MATMUL_ENC_C   ${CMAKE_CURRENT_SOURCE_DIR}/matmul.enc.c)
