@@ -8,6 +8,7 @@ if(CMAKE_BUILD_TYPE MATCHES DEBUG)
 else()
   set(FLAG_OPTS -O3)
 endif(CMAKE_BUILD_TYPE MATCHES DEBUG)
+set(FLAG_OPTS ${FLAG_OPTS} -mno-mmx -mno-sse -mno-sse4.2 -mno-avx)
 
 if(REPORT_CYCLES)
   set(PREP_CYCLES -DCYCLES)
