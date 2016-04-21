@@ -4,7 +4,7 @@ include(../../cmake/functions.cmake)
 include(../../cmake/flags.cmake)
 
 
-set(DIJKSTRA_NUM_NODES "" CACHE STRING "number of nodes in the graph")
+set(DIJKSTRA_NUM_NODES "4" CACHE STRING "number of nodes in the graph")
 
 
 set(DIJKSTRA_MAIN_C  ${CMAKE_CURRENT_SOURCE_DIR}/dijkstra.main.c)
