@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
       int64_t res = ___enc_repl(&input[0]);
 #if (defined DEBUG) || (defined CYCLES)
       t2 = __cyc_rdtscp();
-      total += t2 - t1;
+      total += __cyc_delta(i, t2, t1);
 #endif
 
       __cs_facc(res);

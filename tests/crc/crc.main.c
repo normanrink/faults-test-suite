@@ -67,6 +67,7 @@
 
 
 const long length = LENGTH;
+const unsigned repetitions = REPETITIONS;
 
 
 extern long input[1368865];
@@ -87,20 +88,22 @@ int main(int argc, char *argv[])
     __cs_reset();
 #endif
 
+    for (i = 0; i < repetitions; i++) {
 #if (defined DEBUG) || (defined CYCLES)
-    __cyc_warmup();
-    t1 = __cyc_rdtsc();
+      __cyc_warmup();
+      t1 = __cyc_rdtsc();
 #endif
-    ___enc_computation(&input[0], length);
+      ___enc_computation(&input[0], length);
 #if (defined DEBUG) || (defined CYCLES)
-    t2 = __cyc_rdtsc();
-    total += t2 - t1;
+      t2 = __cyc_rdtsc();
+      total += __cyc_delta(i, t2, t1);
 #endif
 
-    __cs_facc(___enc_get_crc());
+      __cs_facc(___enc_get_crc());
 #if (defined DEBUG) || (defined CHECKSUM)
-    __cs_acc(___enc_get_crc());
+      __cs_acc(___enc_get_crc());
 #endif
+    }
 
     __cs_fclose();
 #if (defined DEBUG) || (defined CYCLES)

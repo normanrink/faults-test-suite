@@ -34,6 +34,8 @@
 
 #include <stdio.h>
 
+const unsigned repetitions = REPETITIONS;
+
 
 extern long input[];
 
@@ -61,6 +63,7 @@ void display_bits(long num, long bits) {
  */
 int main(int argc, char* argv[]) {
   uint64_t t1, t2, total = 0;
+  unsigned j;
   long sk1 = 0, sk2 = 0;
 
   const long key = 809;
@@ -75,24 +78,25 @@ int main(int argc, char* argv[]) {
   __cs_reset();
 #endif
 
-  unsigned i = 0;
-  while (input[i] != EOF) {
+  for (j = 0; j < repetitions; j++) {
+    unsigned i = 0;
+    while (input[i] != EOF) {
 #if (defined DEBUG) || (defined CYCLES)
-    __cyc_warmup();
-    t1 = __cyc_rdtsc();
+      __cyc_warmup();
+      t1 = __cyc_rdtsc();
 #endif
-    long ch = ___enc_des(input[i], &sk1, &sk2);
+      long ch = ___enc_des(input[i], &sk1, &sk2);
 #if (defined DEBUG) || (defined CYCLES)
-    t2 = __cyc_rdtsc();
-    total += t2 - t1;
+      t2 = __cyc_rdtsc();
+      total += __cyc_delta(j, t2, t1);
 #endif
 
-    __cs_facc(ch);
+      __cs_facc(ch);
 #if (defined DEBUG) || (defined CHECKSUM)
-    __cs_acc(ch);
+      __cs_acc(ch);
 #endif
-
-    ++i;
+      ++i;
+    }
   }
 
   __cs_fclose();

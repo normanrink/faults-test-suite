@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     ___enc_multiply(&result[0], &matrix[0], &vector[0], length);
 #if (defined DEBUG) || (defined CYCLES)
     t2 = __cyc_rdtscp();
-    total += t2 - t1;
+    total += __cyc_delta(k, t2, t1);
 #endif
 
     for (unsigned i = 0; i < length; i++) {

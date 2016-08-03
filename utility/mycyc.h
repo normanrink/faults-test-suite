@@ -6,6 +6,8 @@
 void __cyc_warmup() __attribute__((always_inline));
 void __cyc_msg(uint64_t cs) __attribute__((always_inline));
 
+uint64_t __cyc_delta(unsigned iteration, uint64_t t2, uint64_t t1) __attribute__((always_inline));
+
 // Use 'rdtsc' for initial reading of the timestamp counter.
 // (cf. Intel white paper 324264-001 "How to Benchmark Code Execution
 // Times on Intel® IA-32 and IA-64 Instruction Set Architectures")

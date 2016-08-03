@@ -20,3 +20,11 @@ void __cyc_msg(uint64_t cs) {
   fprintf(stderr, "elapsed cycles: %lu\n", cs);
 }
 
+uint64_t __cyc_delta(unsigned iteration, uint64_t t2, uint64_t t1) {
+#if (defined NUMBER_WARMUP)
+  return (iteration < (NUMBER_WARMUP)) ? 0 : t2 - t1;
+#else
+  return t2 - t1;
+#endif
+}
+

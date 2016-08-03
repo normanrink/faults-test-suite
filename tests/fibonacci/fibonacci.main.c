@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
       unsigned long f = ___enc_fib(length);
 #if (defined DEBUG) || (defined CYCLES)
       t2 = __cyc_rdtscp();
-      total += t2 - t1;
+      total += __cyc_delta(i, t2, t1);
 #endif
 
       __cs_facc(f);

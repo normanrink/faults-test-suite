@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     ___enc_bubblesort(&a0[0], length);
 #if (defined DEBUG) || (defined CYCLES)
     t2 = __cyc_rdtscp();
-    total += t2 - t1;
+    total += __cyc_delta(i, t2, t1);
 #endif
 
     for (unsigned j = 0; j < length; j++) {
